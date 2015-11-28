@@ -25,8 +25,8 @@ public class Main {
     	if (args.length == 0) {
     		//throw an error
     	}
-        for (String arg : args) {
-            switch (arg) {
+        String arg1 = args[0]; 
+            switch (arg1) {
             case "init":
             	if (args.length != 1) {
                     //throw an error		
@@ -38,8 +38,67 @@ public class Main {
                 else {
                     // throw an error directory already exists	
                 }
-            }
-            	
+            case "add":
+            	if (args.length != 2) {
+            		//throw an error
+            	}
+                String filename = args[1];
+                File added = new File("filename");
+                if (added.exists()) {
+                	// stage it 
+                } else {
+                    // throw an error file doesn't exist	
+                }
+            case "commit":
+            	if (args.length != 2) {
+            		//throw an error
+            	}
+            	String commitmessage = args[1];
+            case "rm":
+            	if (args.length != 2) {
+            		//throw an error
+            	}
+            	String filename2 = args[1];
+            	File removed = new File("filename");
+            case "log":
+            	if (args.length != 1) {
+                    //throw an error		
+            	}
+            case "global-log":
+            	if (args.length != 1) {
+                    //throw an error		
+            	}
+            case "find":
+            	if (args.length != 2) {
+                    //throw an error		
+            	}
+            	String commitmessage2 = args[1];
+            case "status":
+            	if (args.length != 1) {
+                    //throw an error		
+            	}
+            case "checkout":
+            case "branch":
+            	if (args.length != 2) {
+                    //throw an error		
+            	}
+            	String branchname = args[1];
+            case "rm-branch":	
+            	if (args.length != 2) {
+                    //throw an error		
+            	}
+            	String branchname2 = args[1];
+            case "reset":
+            	if (args.length != 2) {
+                    //throw an error		
+            	}
+            	String commitid = args[1];
+            case "merge":
+            	if (args.length != 2) {
+                    //throw an error		
+            	}
+            	String branchname3 = args[1];
         }
     }
 }
+
