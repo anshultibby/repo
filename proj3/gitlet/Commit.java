@@ -19,6 +19,12 @@ public class Commit implements Serializable {
 	public String timestamp() {
 		return _timestamp.toString();
 	}
+	public String commitmessage() {
+		return _commitmessage;
+	}
+	public String prev() {
+		return _previouscommit;
+	}
 	public boolean hasmessage(String message) {
 		return _commitmessage.equals(message);
 	}
@@ -27,6 +33,11 @@ public class Commit implements Serializable {
 			return true;
 		}
 		return false;
+	}
+	public Commit prevobj() {
+		File prev = new File(".gitlet", _previouscommit);
+		Commit prevobj = Main.getcommitobject(prev);
+		return prevobj;
 	}
 	public HashMap<String, String> getmap() {
 		return _blobs;

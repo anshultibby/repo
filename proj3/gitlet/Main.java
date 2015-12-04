@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 //import java.nio.file.Path;
 //import java.nio.file.Paths;
 import java.util.regex.Matcher;
@@ -85,7 +86,7 @@ public class Main {
             	File BranchData = new File(".gitlet", "BranchData");
             	File stagingarea = new File(".gitlet", ".staging");
             	if (BranchData.exists()) {
-            		BranchData branchdata = getBDobject(BranchData);
+            		BranchData branchdata = getBDobject();
             		if (!branchdata.hasuntracked() && stagingarea.list().length == 0) {
             		    System.out.println("No changes added to the commit.");
             			break;	
@@ -128,9 +129,8 @@ public class Main {
             	} else {
 	            	String filename2 = args[1];
 	            	File removed = new File(filename2);
-	            	File BranchData = new File(".gitlet", "BranchData");
 	            	File stagingarea = new File(".gitlet", ".staging");
-	            	BranchData branchdata = getBDobject(BranchData);
+	            	BranchData branchdata = getBDobject();
 	            	String headcommit = branchdata.getcurrhead();
 	            	File currcommit = new File(".gitlet", headcommit);
 	            	Commit currcommitobj = getcommitobject(currcommit);
@@ -167,12 +167,29 @@ public class Main {
             	if (args.length != 2) {
                     //throw an error		
             	}
+            	BranchData bd = getBDobject();
             	String branchname = args[1];
+            	bd.addbranch(branchname, bd.getcurrhead());
+            	gitlet = new File(".gitlet");
+            	storeasfile("BranchData", gitlet,bd);
+            	break;
             case "rm-branch":	
             	if (args.length != 2) {
                     //throw an error		
             	}
             	String branchname2 = args[1];
+            	bd = getBDobject();
+            	if (bd.iscurrent(branchname2)) {
+            		//throw an error cannot remove the branch we are on
+            		break;
+            	}
+            	if (!bd.removebranch(branchname2)) { 
+            	    System.out.println("A branch with that name does not exist."); 
+            	    break;
+                }
+            	gitlet = new File(".gitlet");
+            	storeasfile("BranchData", gitlet,bd);
+            	break;
             case "reset":
             	if (args.length != 2) {
                     //throw an error		
@@ -183,10 +200,119 @@ public class Main {
                     //throw an error		
             	}
             	String branchname3 = args[1];
-            	return;
+            	merge(branchname3);
+            	break;
             default: 
             	throw new IOException("No command with that name exists.");
         }
+    }
+    /** Method which performs a merge. */
+    private static void merge(String given) {
+    	BranchData bd = getBDobject();
+    	if (bd.contains(given)) {
+    		if (bd.iscurrent(given)) {
+    			//throw merging with itself error
+    			return;
+    		}
+    		Commit currcommit = bd.getcurrobj();
+    		Commit givencommit = bd.getcommitobj(given);
+    		if (currcommit.equals(givencommit)) {
+    		    System.out.println("Branches to be merged are at same commit.");
+    		}
+    		Commit prevofcurrent = currcommit;
+    		while (prevofcurrent.prev() != null) {
+    			prevofcurrent = prevofcurrent.prevobj();
+    			if (givencommit.equals(prevofcurrent)) {
+    			    System.out.println("Branches to be merged are at same commit.");
+    			    return;
+    			}
+    		}
+    		Commit prevofgiven = givencommit;
+    		while (prevofgiven.prev() != null) {
+    			prevofgiven = prevofgiven.prevobj();
+    			if (currcommit.equals(prevofgiven)) {
+    			    bd.setcurrhead(Utils.sha1(givencommit.timestamp())); 
+    			    System.out.println("Fast-Forwarded.");
+    			    return;
+    			}
+    		}
+    		Commit splitpoint = findsplit(currcommit, givencommit);
+    		HashMap<String, String> currmap = currcommit.getmap();
+    		HashMap<String, String> givenmap = givencommit.getmap();
+    		HashMap<String, String> splitmap = splitpoint.getmap();
+    		boolean conflicts = false;
+    		for (String splitkey : splitmap.keySet()) {
+    			String splithashval = splitmap.get(splitkey);
+    			String givenmapval = givenmap.get(splitkey);
+    			String currmapval = currmap.get(splitkey);
+    			if (splithashval.equals(currmapval) && !splithashval.equals(givenmapval)) {
+    				if (givenmapval.equals(null)) {
+    					// remove and untrack
+    				} else {
+    					//checkout file in given and stage it
+    				}
+    			}
+    			if (!splithashval.equals(currmapval) && splithashval.equals(givenmapval)) {
+    				if (currmapval.equals(null)) {
+    				// Do nothing
+    				} else {
+    				//Do nothing    				
+    			    }
+    			}
+
+    			if (!splithashval.equals(currmapval) && !splithashval.equals(givenmapval) 
+    					&& !givenmapval.equals(currmapval)) {
+    			    conflicts = true;
+    				if (currmapval.equals(null)) {
+    			    	// curr was deleted
+    			    } else if (givenmapval.equals(null)) {
+    			    	// given was deleted
+    			    } else {
+    			    	// merge curr and given
+    			    }
+    			}
+    			}
+    		Set<String> keyset;
+    		if (currmap.size() > givenmap.size()) {
+    			keyset = currmap.keySet();
+    		} else {
+    		    keyset = givenmap.keySet();
+    		}
+    		for (String key : keyset) {
+    		    if (currmap.get(key).equals(null)) {
+    		    	// checkout givenmap.get(key) and stage
+    		    }
+    		    if (givenmap.get(key).equals(null)) {
+    		    	// do nothing
+    		    }
+    		}
+    		if (conflicts) {
+    			System.out.println("Encountered a merge conflict.");
+    		} else {
+    			System.out.println("Merged " + bd.getcurrent()
+    			    + " with" + given);
+    			// commit everything
+    		}
+    	} else {
+    		// throw an error the branch doesnt exist
+    	}
+    }
+    		
+    /** Method which takes two commits at the head of two branches and then returns the commit at which they split. 
+     * @return */
+    private static Commit findsplit(Commit current, Commit given) {
+    	Commit prevofcurrent = current;
+    	Commit prevofgiven = given;
+    	while (prevofcurrent.prev() != null) {
+    		prevofcurrent = prevofcurrent.prevobj();
+    		while (prevofgiven.prev() != null) {
+    			prevofgiven = prevofgiven.prevobj();
+			    if (prevofcurrent.equals(prevofgiven)) {
+				    return prevofcurrent;
+			    }
+    		}
+    	}
+    	return null;
     }
     /** Method which takes in args and performs checkout procedure. */
     private static void checkout(String... args) {
@@ -195,9 +321,24 @@ public class Main {
     	} else {
     		if (args[1] == "--") {
     			String filename = args[2]; 
+            	BranchData branchdata = getBDobject();
+            	Commit headcommitobj = branchdata.getcurrobj();
+            	HashMap<String, String> map = headcommitobj.getmap();
+            	if (map.get(filename) != null) {
+            		File repofile = new File(".gitlet", map.get(filename));
+            		if (repofile.exists()) {
+            		    File tobeadded = new File(filename);
+            		    Utils.writeContents(tobeadded, Utils.readContents(repofile));
+            		} else {
+            			//throw object that the commit points to doesnt exist error.
+            		}
+            	} else {
+            		//throw file not exists error
+            	}
     		} else if (args.length != 2 && args[3] == "--") {
     			String filename = args[3];
     			String commitid = args[1];
+    			
     		} else if (args.length == 2) {
     			String branchname = args[1];
     		}
@@ -205,7 +346,7 @@ public class Main {
     	}
     }
     /** Method to convert a file object into a Commit object by reading the given file and deserializing it. */
-    private static Commit getcommitobject(File file) {
+    public static Commit getcommitobject(File file) {
     	Commit obj;
     	try {
     	    ObjectInputStream inp =
@@ -218,7 +359,8 @@ public class Main {
     	return obj;
     }
     /** Method to convert a file object into a BranchData object by reading the given file and deserializing it. */
-    private static BranchData getBDobject(File file) {
+    private static BranchData getBDobject() {
+    	File file = new File(".gitlet", "BranchData");
     	BranchData obj;
     	try {
     	    ObjectInputStream inp =

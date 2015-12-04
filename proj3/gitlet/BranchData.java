@@ -1,5 +1,6 @@
 package gitlet;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +19,10 @@ public class BranchData implements Serializable{
     }
     public void setcurrent(String Branch) {
     	_current = Branch;
-    }	
+    }
+    public void setcurrhead(String commit) {
+    	_branches.put(_current, commit);
+    }
     public void addbranch(String Branch, String Commit) {
     	_branches.put(Branch, Commit);
     }
@@ -32,6 +36,32 @@ public class BranchData implements Serializable{
     /** Returns the name of the head commit of the current branch. */
     public String getcurrhead() {
     	return _branches.get(_current);
+    }
+    /** Returns true if the entered string is the current branch that we are at. */
+    public boolean iscurrent(String branch) {
+    	return branch == _current;
+    }
+    /** Removes the given branch returning true if it succeeds and false if the branch doesn't exist. */
+    public boolean removebranch(String branch) {
+    	if (_branches.containsKey(branch)) {
+    		_branches.remove(branch);
+    		return true;
+    	}
+    	return false;
+    }
+    /** Returns the commit object which the current head pointer is at. */
+    public Commit getcurrobj() {
+    	String commit = _branches.get(_current);
+    	File commitf = new File(".gitlet", commit);
+    	Commit commitobj = Main.getcommitobject(commitf);
+    	return commitobj;
+    }
+    /** Returns the commit object which the particular branche's head pointer is at. */
+    public Commit getcommitobj(String branch) {
+    	String commit = _branches.get(branch);
+    	File commitf = new File(".gitlet", commit);
+    	Commit commitobj = Main.getcommitobject(commitf);
+    	return commitobj;
     }
     /** Returns the number of branches that exist in this folder. */
     public int size() {
