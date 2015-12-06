@@ -94,7 +94,6 @@ public class Main {
             	    Commit thiscommit = new Commit(commitmessage, branchdata.getcurrhead());
             	    List<String> listoffiles = Utils.plainFilenamesIn(stagingarea);
             	    for (String file : listoffiles) {
-            	    	System.out.print(file);
             	    	File stagedfile = new File(stagingarea, file);
             	    	String SHA1code = Utils.sha1(Utils.readContents(stagedfile));
             	        thiscommit.add(file, SHA1code);
@@ -104,8 +103,7 @@ public class Main {
             	    }
             	    File previouscommit = new File(".gitlet", branchdata.getcurrhead());
             	    Commit previouscommitobj = getcommitobject(previouscommit);
-            	    System.out.println(branchdata.getcurrhead());
-            	    System.out.println(previouscommitobj);
+
             	    HashMap<String, String> commitmap = previouscommitobj.getmap();
             	    for (String key : commitmap.keySet()) {
             	        String hashfrommap = commitmap.get(key);
@@ -142,6 +140,8 @@ public class Main {
 	            	if (stagedfile.exists()) {
                          stagedfile.delete();
 	            	}
+	            	File gitlet2 = new File(".gitlet");
+	            	storeasfile("BranchData", gitlet2, branchdata);
             	}
             case "log":
             	if (args.length != 1) {
@@ -195,6 +195,7 @@ public class Main {
                     //throw an error		
             	}
             	String commitid = args[1];
+            	reset(commitid);
             case "merge":
             	if (args.length != 2) {
                     //throw an error		
@@ -314,14 +315,15 @@ public class Main {
     	}
     	return null;
     }
-    /** Method which takes in args and performs checkout procedure. */
-    private static void checkout(String... args) {
+    /** Method which takes in args and performs checkout procedure. 
+     * @throws IOException */
+    private static void checkout(String... args) throws IOException {
     	if (args.length < 2 || args.length > 4) {
     		//throw an error
     	} else {
+    		BranchData branchdata = getBDobject();
     		if (args[1] == "--") {
-    			String filename = args[2]; 
-            	BranchData branchdata = getBDobject();
+    			String filename = args[2]; 	
             	Commit headcommitobj = branchdata.getcurrobj();
             	HashMap<String, String> map = headcommitobj.getmap();
             	if (map.get(filename) != null) {
@@ -338,12 +340,84 @@ public class Main {
     		} else if (args.length != 2 && args[3] == "--") {
     			String filename = args[3];
     			String commitid = args[1];
+    			File commitidf = new File(".gitlet", commitid);
+    			if (commitidf.exists()) {
+    			    Commit commitobj = branchdata.getcommitobj(commitid);
+    			    HashMap<String, String> map = commitobj.getmap();
+    			    if (map.get(filename) != null) {
+                		File repofile = new File(".gitlet", map.get(filename));
+                		if (repofile.exists()) {
+                		    File tobeadded = new File(filename);
+                		    Utils.writeContents(tobeadded, Utils.readContents(repofile));
+                		} else {
+                			//throw object that the commit points to doesnt exist error.
+                		}
+                	} else {
+                		//throw file not exists error
+                	}
+    			    
+    			    
+    			} else {
+    				// commit file doesnt exist
+    			}
     			
     		} else if (args.length == 2) {
     			String branchname = args[1];
+    			if (branchdata.iscurrent(branchname)) {
+    				// do nothing
+    			}
+    			if (branchdata.containsbranch(branchname)) {
+                    Commit branchcommit = branchdata.getcommitobj(branchname);
+                    Commit currcommit = branchdata.getcurrobj();
+                    HashMap<String, String> currmap = currcommit.getmap(); 
+                    HashMap<String, String> branchmap = branchcommit.getmap();
+                    File thisdir = new File(".");
+                    File[] fileshere = thisdir.listFiles();
+                    for (File file : fileshere) {
+                        String name = file.getName();
+                        if (!currmap.containsKey(name) && branchmap.containsKey(name)) {
+                        	System.out.println("There is an untracked file in the way; delete it or add it first.");
+                        	return;
+                        }
+                    }
+                    for (String key : currmap.keySet()) {
+                        if (!branchmap.containsKey(key)) {
+                        	File rmfile = new File(key);
+                        	rmfile.delete();
+                        }
+                    }
+                    for (String key : branchmap.keySet()) {
+                        File addfile = new File(key);
+                        if (!addfile.exists()) {
+                        	addfile.createNewFile();
+                        }
+                        File branchfile = new File(".gitlet", branchmap.get(key));
+                        Utils.writeContents(addfile, Utils.readContents(branchfile));
+                    }
+                    File staging = new File(".gitlet", ".staging");
+                    File[] tobestaged = staging.listFiles();
+                    for (File file : tobestaged) {
+                    	file.delete();
+                    }
+                    branchdata.setcurrent(branchname);
+                    File gitlet = new File(".gitlet");
+	            	storeasfile("BranchData", gitlet, branchdata);
+    			} else {
+    				// throw an error you don't have the specified branch
+    			}
     		}
-    		
     	}
+    }
+    /** Reset method puts the branch back to the commit which is the input. */
+    private static void reset(String commitid) {
+        File commitf = new File(".gitlet", commitid);
+        if (!commitf.exists()) {
+        	System.out.print(" No commit with that id exists.");
+        	return;
+        }
+        BranchData bd = getBDobject();
+        Commit argcommit = getcommitobject(commitf);
+        Commit currcommit = bd.getcurrobj();
     }
     /** Method to convert a file object into a Commit object by reading the given file and deserializing it. */
     public static Commit getcommitobject(File file) {

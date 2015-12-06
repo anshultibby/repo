@@ -49,6 +49,10 @@ public class BranchData implements Serializable{
     	}
     	return false;
     }
+    /** Boolean returns true if the branch data contains the given branch. */
+    public boolean containsbranch(String branch) {
+    	return _branches.containsKey(branch);
+    }
     /** Returns the commit object which the current head pointer is at. */
     public Commit getcurrobj() {
     	String commit = _branches.get(_current);
