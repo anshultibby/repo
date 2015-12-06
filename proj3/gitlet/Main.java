@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDateTime;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,12 +10,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import ucb.util.CommandArgs;
 
@@ -42,8 +42,9 @@ public class Main {
                     File stagingarea = new File(gitlet, ".staging");
                     stagingarea.mkdir();
                     Commit initialcommit = new Commit("initial commit", null);
-                    storeasfile("initcommit", gitlet, initialcommit);
-                    BranchData BranchData = new BranchData("master", "initcommit");
+                    String initcommit = new String(Utils.sha1(initialcommit.timestamp()));
+                    storeasfile(initcommit, gitlet, initialcommit);
+                    BranchData BranchData = new BranchData("master", initcommit);
                     storeasfile("BranchData", gitlet, BranchData);
                 }
                 
@@ -143,8 +144,26 @@ public class Main {
             	}
             case "log":
             	if (args.length != 1) {
-                    //throw an error		
+                    //throw an error	
             	}
+            	BranchData headpointer = getBDobject();
+            	Commit commit = headpointer.getcurrobj();
+            	
+            	System.out.println("===");
+            	System.out.println("Commit " + headpointer.getcurrhead());
+            	System.out.println(commit.timestamp());
+            	System.out.println(commit.commitmessage());
+            	while (commit.haspreviouscommit()) {
+                	System.out.println();
+                	Commit pointer = commit;
+                	commit = commit.prevobj();
+                	System.out.println("===");
+                    System.out.println("Commit " + pointer.prev());
+                    System.out.println(commit.timestamp());
+                    System.out.println(commit.commitmessage());        	
+            	}
+            	break;
+            	
             case "global-log":
             	if (args.length != 1) {
                     //throw an error		

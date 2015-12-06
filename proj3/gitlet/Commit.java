@@ -2,13 +2,15 @@ package gitlet;
 
 import java.io.File;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
 public class Commit implements Serializable {
     
 	Commit(String commitmessage, String previous) {
-		_timestamp = new Date();
+		_timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		_commitmessage = commitmessage;
 		_previouscommit = previous;
 		if (previous != null) {
@@ -22,7 +24,7 @@ public class Commit implements Serializable {
 		_blobs.put(nameoffile, hashcode);
 	}
 	public String timestamp() {
-		return _timestamp.toString();
+		return _timestamp;
 	}
 	public String commitmessage() {
 		return _commitmessage;
@@ -39,17 +41,22 @@ public class Commit implements Serializable {
 		}
 		return false;
 	}
+	
+	public boolean haspreviouscommit() {
+	    return _previouscommit != null;
+	}
 	public Commit prevobj() {
 		File prev = new File(".gitlet", _previouscommit);
 		Commit prevobj = Main.getcommitobject(prev);
 		return prevobj;
 	}
+	
 	public HashMap<String, String> getmap() {
 		return _blobs;
 	}
 	
     /** Private date variable which stores the timestamp. */
-	private Date _timestamp;
+	private String _timestamp;
 	/** Private string variable which contains the commit message. */
 	private String _commitmessage;
 	/** Data structure that keeps track of file names and their SHA1 hashcodes. */
