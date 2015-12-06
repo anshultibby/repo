@@ -55,7 +55,7 @@ public class BranchData implements Serializable{
     
     /** Returns true if the entered string is the current branch that we are at. */
     public boolean iscurrent(String branch) {
-    	return branch == _current;
+    	return branch.equals(_current);
     }
     
     /** Removes the given branch returning true if it succeeds and false if the branch doesn't exist. */
@@ -75,7 +75,7 @@ public class BranchData implements Serializable{
     /** Returns the commit object which the current head pointer is at. */
     public Commit getcurrobj() {
     	String commit = _branches.get(_current);
-    	File commitf = new File(".gitlet", commit);
+    	File commitf = new File(".gitlet/.commits", commit);
     	Commit commitobj = Main.getcommitobject(commitf);
     	return commitobj;
     }
@@ -83,7 +83,7 @@ public class BranchData implements Serializable{
     /** Returns the commit object which the particular branche's head pointer is at. */
     public Commit getcommitobj(String branch) {
     	String commit = _branches.get(branch);
-    	File commitf = new File(".gitlet", commit);
+    	File commitf = new File(".gitlet/.commits", commit);
     	Commit commitobj = Main.getcommitobject(commitf);
     	return commitobj;
     }

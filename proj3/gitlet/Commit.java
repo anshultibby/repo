@@ -41,7 +41,7 @@ public class Commit implements Serializable {
 	    return _previouscommit != null;
 	}
 	public Commit prevobj() {
-		File prev = new File(".gitlet", _previouscommit);
+		File prev = new File(".gitlet/.commits", _previouscommit);
 		Commit prevobj = Main.getcommitobject(prev);
 		return prevobj;
 	}
