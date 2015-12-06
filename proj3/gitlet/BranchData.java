@@ -7,40 +7,53 @@ import java.util.HashMap;
 
 public class BranchData implements Serializable{
     
-	BranchData(){ 
+	public BranchData(){ 
         _branches = new HashMap<String, String>();
         _untracked = new ArrayList<String>();
     }
-    BranchData(String Branch, String Commit) {
+	
+    public BranchData(String Branch, String Commit) {
     	_branches = new HashMap<String, String>();
-    	 _untracked = new ArrayList<String>();
+    	_untracked = new ArrayList<String>();
     	_branches.put(Branch, Commit);
     	_current = Branch;
     }
+    
     public void setcurrent(String Branch) {
     	_current = Branch;
     }
+    
     public void setcurrhead(String commit) {
     	_branches.put(_current, commit);
     }
+    
     public void addbranch(String Branch, String Commit) {
     	_branches.put(Branch, Commit);
     }
+    
     public void addcurrbranch(String Branch, String Commit) {
     	_branches.put(Branch, Commit);
     	_current = Branch;
     }
+    
     public void addcommit(String Commit) {
     	_branches.put(_current, Commit);
     }
-    /** Returns the name of the head commit of the current branch. */
+    
+    public String getcommitname(String branch){
+        return _branches.get(branch);
+    }
+    
+    /** Returns the SHA name of the head commit of the current branch. */
     public String getcurrhead() {
     	return _branches.get(_current);
     }
+    
     /** Returns true if the entered string is the current branch that we are at. */
     public boolean iscurrent(String branch) {
     	return branch == _current;
     }
+    
     /** Removes the given branch returning true if it succeeds and false if the branch doesn't exist. */
     public boolean removebranch(String branch) {
     	if (_branches.containsKey(branch)) {
@@ -49,10 +62,12 @@ public class BranchData implements Serializable{
     	}
     	return false;
     }
+    
     /** Boolean returns true if the branch data contains the given branch. */
     public boolean containsbranch(String branch) {
     	return _branches.containsKey(branch);
     }
+    
     /** Returns the commit object which the current head pointer is at. */
     public Commit getcurrobj() {
     	String commit = _branches.get(_current);
@@ -60,6 +75,7 @@ public class BranchData implements Serializable{
     	Commit commitobj = Main.getcommitobject(commitf);
     	return commitobj;
     }
+    
     /** Returns the commit object which the particular branche's head pointer is at. */
     public Commit getcommitobj(String branch) {
     	String commit = _branches.get(branch);
@@ -67,10 +83,12 @@ public class BranchData implements Serializable{
     	Commit commitobj = Main.getcommitobject(commitf);
     	return commitobj;
     }
+    
     /** Returns the number of branches that exist in this folder. */
     public int size() {
     	return _branches.size();
     }
+    
     /** Returns the name of the current branch that we are at. */
     public String getcurrent() {
     	return _current;
@@ -93,6 +111,10 @@ public class BranchData implements Serializable{
     		return false;
     	}
     	return true;
+    }
+    
+    public HashMap<String, String> getBranches() {
+        return _branches;
     }
     
     /** A private list which contains the name of all the files which have been untracked. */

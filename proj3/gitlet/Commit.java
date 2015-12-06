@@ -36,16 +36,21 @@ public class Commit implements Serializable {
 		}
 		return false;
 	}
+	
+	public boolean haspreviouscommit() {
+	    return _previouscommit != null;
+	}
 	public Commit prevobj() {
 		File prev = new File(".gitlet", _previouscommit);
 		Commit prevobj = Main.getcommitobject(prev);
 		return prevobj;
 	}
+	
 	public HashMap<String, String> getmap() {
 		return _blobs;
 	}
 	
-    /**Private date variable which stores the timestamp. */
+    /** Private date variable which stores the timestamp. */
 	private String _timestamp;
 	/** Private string variable which contains the commit message. */
 	private String _commitmessage;
