@@ -99,7 +99,7 @@ public class Main {
             	    for (String key : commitmap.keySet()) {
             	        String hashfrommap = commitmap.get(key);
             	        if (!branchdata.contains(key)) {
-            	        thiscommit.add(key, hashfrommap);	
+            	            thiscommit.add(key, hashfrommap);	
             	        }
             	    }
             	    String commithashcode = Utils.sha1(thiscommit.timestamp());

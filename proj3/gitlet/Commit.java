@@ -13,12 +13,7 @@ public class Commit implements Serializable {
 		_timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		_commitmessage = commitmessage;
 		_previouscommit = previous;
-		if (previous != null) {
-		    File previouscommit = new File(".gitlet", previous);
-		    _blobs = Main.getcommitobject(previouscommit).getmap();
-		} else {
-		    _blobs = new HashMap<String, String>();
-		}
+        _blobs = new HashMap<String, String>();
 	}
 	public void add(String nameoffile, String hashcode) {
 		_blobs.put(nameoffile, hashcode);
