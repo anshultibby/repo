@@ -171,11 +171,15 @@ public class Main {
             	}
             	BranchData branches = getBDobject();
             	HashSet<String> uniqueCommits = new HashSet<String>();
+            	int round = 0;
             	for (String branchname: branches.getBranches().keySet()) {
             	    Commit current = branches.getcommitobj(branchname);
             	    if (uniqueCommits.contains(branches.getcommitname(branchname))) {
             	        continue;
             	    } else {
+            	        if (round != 0) {
+            	            System.out.println();
+            	        }
             	        System.out.println("===");
                         System.out.println("Commit " + branches.getcommitname(branchname));
                         System.out.println(current.timestamp());
@@ -184,10 +188,10 @@ public class Main {
             	    }
             	    while (current.haspreviouscommit()) {
             	        Commit pointer = current;
+            	        current = current.prevobj();
                 	    if (uniqueCommits.contains(pointer.prev())) {
                 	        continue;
                 	    } else {
-                	        current = current.prevobj();
                 	        System.out.println();
                     	    System.out.println("===");
                             System.out.println("Commit " + pointer.prev());
@@ -196,6 +200,7 @@ public class Main {
                             uniqueCommits.add(pointer.prev());
                 	    }
             	    }
+            	    round += 1;
             	}   
             	break;
             	
@@ -203,8 +208,42 @@ public class Main {
             	if (args.length != 2) {
                     //throw an error		
             	}
-            	String commitmessage2 = args[1];
+            	String targetmessage = args[1];
+            	ArrayList<String> found = new ArrayList<String>();
+            	ArrayList<String> traversed = new ArrayList<String>();
+            	BranchData findbranches = getBDobject();
+            	for (String branchname: findbranches.getBranches().keySet()) {
+            	    Commit currentcomm = findbranches.getcommitobj(branchname);
+            	    if (traversed.contains(findbranches.getcommitname(branchname))) {
+                        continue;
+                    } else {
+                        if (currentcomm.commitmessage().equals(targetmessage)) {
+                            found.add(findbranches.getcommitname(branchname));
+                            traversed.add(findbranches.getcommitname(branchname));
+                        }
+                    }
+            	    while (currentcomm.haspreviouscommit()) {
+                        Commit pointer = currentcomm;
+                        Commit next = pointer;
+                        next = next.prevobj();
+                        if (traversed.contains(pointer.prev())) {
+                            continue;
+                        } else {
+                            if (next.commitmessage().equals(targetmessage)) {
+                                found.add(pointer.prev());
+                                traversed.add(pointer.prev());
+                            }
+                            currentcomm = currentcomm.prevobj();
+                        }
+                    }
+            	}
+            	
+            	
+            	for (String id: found) {
+            	    System.out.println(id);
+            	}
             	break;
+            	
             case "status":
             	if (args.length != 1) {
                     //throw an error		
