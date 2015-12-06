@@ -1,7 +1,7 @@
 package gitlet;
 
 import java.io.ByteArrayOutputStream;
-import java.time.LocalDateTime;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,189 +11,133 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.omg.IOP.Encoding;
-
-import ucb.util.CommandArgs;
 
 /** Driver class for Gitlet, the tiny stupid version-control system.
  *  @author Anshul Tibrewal and Michael Wang
  */
 public class Main {
-
 	/** Usage: java gitlet.Main ARGS, where ARGS contains
 	 *  <COMMAND> <OPERAND> .... 
 	 * @throws IOException */
 	public static void main(String... args) throws IOException {
 		if (args.length == 0) {
-			throw new IOException("Please enter a command.");
+			System.out.println("Please enter a command.");
+			return;
 		}
 		String arg1 = args[0]; 
 		switch (arg1) {
 		case "init":
 			if (args.length != 1) {
-				//throw an error		
-			} else {
-				init();
+				System.out.println("Incorrect operands.");
+				return;
 			}
+				init();
 			break;
-		default: 
+		default:
+			File init = new File(".gitlet");
+			if (!init.exists()) {
+			    System.out.println("Not in an initialized gitlet directory.");
+			    return;
+			}
 			switch (arg1) {
 			case "add":
 				if (args.length != 2) {
-					//throw an error
-				} else {
-					String filename = args[1];
-					add(filename);
+					System.out.println("Incorrect operands.");
+					return;
 				}
+				String filename = args[1];
+				add(filename);
 				break;
 			case "commit":
 				if (args.length != 2) {
-					//throw an error
-				} else {
-					String commitmessage = args[1];
-					commit(commitmessage);
-					break;
+				    System.out.println("Incorrect operands.");
+				    return;
 				}
+				String commitmessage = args[1];
+				commit(commitmessage);
+				break;
 			case "rm":
 				if (args.length != 2) {
-					//throw an error
-				} else {
-					String filename2 = args[1];
-					File removed = new File(filename2);
-					File stagingarea = new File(".gitlet", ".staging");
-					BranchData branchdata = getBDobject();
-					String headcommit = branchdata.getcurrhead();
-					File currcommit = new File(".gitlet", headcommit);
-					Commit currcommitobj = getcommitobject(currcommit);
-					if (currcommitobj.contains(filename2)) {
-						branchdata.untrack(filename2);
-						Utils.restrictedDelete(removed);
-					}
-					File stagedfile = new File(stagingarea, filename2);
-					if (stagedfile.exists()) {
-						stagedfile.delete();
-					}
-					File gitlet2 = new File(".gitlet");
-					storeasfile("BranchData", gitlet2, branchdata);
+					System.out.println("Incorrect operands.");
+					return;
 				}
+				String filename2 = args[1];
+				remove(filename2);
+				break;
 			case "log":
 				if (args.length != 1) {
-					//throw an error	
+					System.out.println("Incorrect operands.");
+					return;
 				}
-				BranchData headpointer = getBDobject();
-				Commit commit = headpointer.getcurrobj();
-
-				System.out.println("===");
-				System.out.println("Commit " + headpointer.getcurrhead());
-				System.out.println(commit.timestamp());
-				System.out.println(commit.commitmessage());
-				while (commit.haspreviouscommit()) {
-					System.out.println();
-					Commit pointer = commit;
-					commit = commit.prevobj();
-					System.out.println("===");
-					System.out.println("Commit " + pointer.prev());
-					System.out.println(commit.timestamp());
-					System.out.println(commit.commitmessage());        	
-				}
+				log();
 				break;
-
 			case "global-log":
 				if (args.length != 1) {
-					//throw an error		
+					System.out.println("Incorrect operands.");
+					return;	
 				}
-				BranchData branches = getBDobject();
-				HashSet<String> uniqueCommits = new HashSet<String>();
-				for (String branchname: branches.getBranches().keySet()) {
-					Commit current = branches.getcommitobj(branchname);
-					if (uniqueCommits.contains(branches.getcommitname(branchname))) {
-						continue;
-					} else {
-						System.out.println("===");
-						System.out.println("Commit " + branches.getcommitname(branchname));
-						System.out.println(current.timestamp());
-						System.out.println(current.commitmessage());
-						uniqueCommits.add(branches.getcommitname(branchname));
-					}
-					while (current.haspreviouscommit()) {
-						Commit pointer = current;
-						if (uniqueCommits.contains(pointer.prev())) {
-							continue;
-						} else {
-							current = current.prevobj();
-							System.out.println();
-							System.out.println("===");
-							System.out.println("Commit " + pointer.prev());
-							System.out.println(current.timestamp());
-							System.out.println(current.commitmessage());
-							uniqueCommits.add(pointer.prev());
-						}
-					}
-				}   
+				globallog();
 				break;
-
 			case "find":
 				if (args.length != 2) {
-					//throw an error		
+					System.out.println("Incorrect operands.");
+					return;		
 				}
-				String commitmessage2 = args[1];
+				String targetmessage = args[1];
+				find(targetmessage);
 				break;
 			case "status":
 				if (args.length != 1) {
-					//throw an error		
+					System.out.println("Incorrect operands.");
+					return;		
 				}
+				status();
+				break;
+
 			case "checkout": 
 				checkout(args);
 				break;
 			case "branch":
 				if (args.length != 2) {
-					//throw an error		
+					System.out.println("Incorrect operands.");
+					return;	
 				}
-				BranchData bd = getBDobject();
 				String branchname = args[1];
-				bd.addbranch(branchname, bd.getcurrhead());
-				File gitlet = new File(".gitlet");
-				storeasfile("BranchData", gitlet,bd);
+				branch(branchname);
 				break;
 			case "rm-branch":	
 				if (args.length != 2) {
-					//throw an error		
+					System.out.println("Incorrect operands.");
+					return;	
 				}
 				String branchname2 = args[1];
-				bd = getBDobject();
-				if (bd.iscurrent(branchname2)) {
-					//throw an error cannot remove the branch we are on
-					break;
-				}
-				if (!bd.removebranch(branchname2)) { 
-					System.out.println("A branch with that name does not exist."); 
-					break;
-				}
-				gitlet = new File(".gitlet");
-				storeasfile("BranchData", gitlet,bd);
+				rmbranch(branchname2);
 				break;
 			case "reset":
 				if (args.length != 2) {
-					//throw an error		
+					System.out.println("Incorrect operands.");
+					return;	
 				}
 				String commitid = args[1];
 				reset(commitid);
 			case "merge":
 				if (args.length != 2) {
-					//throw an error		
+					System.out.println("Incorrect operands.");
+					return;	
 				}
 				String branchname3 = args[1];
 				merge(branchname3);
 				break;
 			default: 
-				throw new IOException("No command with that name exists.");
+				System.out.println("No command with that name exists.");
+				return;
 			}
 		}
 	}
@@ -312,7 +256,8 @@ public class Main {
 	 * @throws IOException */
 	private static void checkout(String... args) throws IOException {
 		if (args.length < 2 || args.length > 4) {
-			//throw an error
+			System.out.println("Incorrect operands.");
+			return;
 		} else {
 			BranchData branchdata = getBDobject();
 			if (args[1] == "--") {
@@ -428,7 +373,170 @@ public class Main {
 		branchdata.addcommit(commithashcode);
 		storeasfile("BranchData", gitlet, branchdata);
 	}
-	
+	/** Private method which handles remove file functionality. 
+	 * @throws IOException */
+	private static void remove(String filename2) throws IOException {
+		File removed = new File(filename2);
+		File stagingarea = new File(".gitlet", ".staging");
+		BranchData branchdata = getBDobject();
+		String headcommit = branchdata.getcurrhead();
+		File currcommit = new File(".gitlet", headcommit);
+		Commit currcommitobj = getcommitobject(currcommit);
+		if (currcommitobj.contains(filename2)) {
+			branchdata.untrack(filename2);
+			Utils.restrictedDelete(removed);
+		}
+		File stagedfile = new File(stagingarea, filename2);
+		if (stagedfile.exists()) {
+			stagedfile.delete();
+		}
+		File gitlet2 = new File(".gitlet");
+		storeasfile("BranchData", gitlet2, branchdata);
+	}
+	/** Private method which handles the status functionality. */
+	private static void status() {
+		BranchData statusBranch = getBDobject();
+		System.out.println("=== Branches ===");
+		String star = statusBranch.getcurrent();
+		for (String branchname: statusBranch.getBranches().keySet()) {
+			if (star.equals(branchname)) {
+				branchname = "*" + star;
+			}
+			System.out.println(branchname);
+		}
+
+		System.out.println();
+		System.out.println("=== Staged Files ===");
+		File staging = new File(".gitlet", ".staging");
+		File[] filenames = staging.listFiles();
+		for (File file: filenames) {
+			System.out.println(file.getName());
+		}
+		System.out.println();
+		System.out.println("=== Removed Files ===");
+		for (String removed: statusBranch.getUntracked()) {
+			System.out.println(removed);
+		}
+
+		System.out.println();
+		System.out.println("=== Modifications Not Staged for Commit ===");
+
+		System.out.println();
+		System.out.println("=== Untracked Files ===");
+		File workingDir = new File(".");
+		File[] workingfiles = workingDir.listFiles();
+		for (File untracked: workingfiles) {
+			System.out.println(untracked);
+		}
+
+	}
+	/** Private method which performs the rm-branch functionality. 
+	 * @throws IOException */
+	private static void rmbranch(String branchname2) throws IOException {
+		BranchData bd = getBDobject();
+		if (bd.iscurrent(branchname2)) {
+			//throw an error cannot remove the branch we are on
+			return;
+		}
+		if (!bd.removebranch(branchname2)) { 
+			System.out.println("A branch with that name does not exist."); 
+			return;
+		}
+		File gitlet = new File(".gitlet");
+		storeasfile("BranchData", gitlet,bd);
+	}
+	/** Private method which handles log functionality. */
+	private static void log() {
+		BranchData headpointer = getBDobject();
+		Commit commit = headpointer.getcurrobj();
+
+		System.out.println("===");
+		System.out.println("Commit " + headpointer.getcurrhead());
+		System.out.println(commit.timestamp());
+		System.out.println(commit.commitmessage());
+		while (commit.haspreviouscommit()) {
+			System.out.println();
+			Commit pointer = commit;
+			commit = commit.prevobj();
+			System.out.println("===");
+			System.out.println("Commit " + pointer.prev());
+			System.out.println(commit.timestamp());
+			System.out.println(commit.commitmessage());        	
+		}
+	}
+	/** Private method which performs the branch functionality. 
+	 * @throws IOException */
+	private static void branch(String branchname) throws IOException {
+		BranchData bd = getBDobject();
+		bd.addbranch(branchname, bd.getcurrhead());
+		File gitlet = new File(".gitlet");
+		storeasfile("BranchData", gitlet,bd);
+	}
+	/** Private method which handles global-log functionality. */
+	private static void globallog() {
+		BranchData branches = getBDobject();
+		HashSet<String> uniqueCommits = new HashSet<String>();
+		for (String branchname: branches.getBranches().keySet()) {
+			Commit current = branches.getcommitobj(branchname);
+			if (uniqueCommits.contains(branches.getcommitname(branchname))) {
+				continue;
+			} else {
+				System.out.println("===");
+				System.out.println("Commit " + branches.getcommitname(branchname));
+				System.out.println(current.timestamp());
+				System.out.println(current.commitmessage());
+				uniqueCommits.add(branches.getcommitname(branchname));
+			}
+			while (current.haspreviouscommit()) {
+				Commit pointer = current;
+				if (uniqueCommits.contains(pointer.prev())) {
+					continue;
+				} else {
+					current = current.prevobj();
+					System.out.println();
+					System.out.println("===");
+					System.out.println("Commit " + pointer.prev());
+					System.out.println(current.timestamp());
+					System.out.println(current.commitmessage());
+					uniqueCommits.add(pointer.prev());
+				}
+			}
+		}   
+	}
+	/** Method which performs the find functionality. */
+	private static void find(String targetmessage) {
+		ArrayList<String> found = new ArrayList<String>();
+		ArrayList<String> traversed = new ArrayList<String>();
+		BranchData findbranches = getBDobject();
+		for (String branchname: findbranches.getBranches().keySet()) {
+			Commit currentcomm = findbranches.getcommitobj(branchname);
+			if (traversed.contains(findbranches.getcommitname(branchname))) {
+				continue;
+			} else {
+				if (currentcomm.commitmessage().equals(targetmessage)) {
+					found.add(findbranches.getcommitname(branchname));
+					traversed.add(findbranches.getcommitname(branchname));
+				}
+			}
+			while (currentcomm.haspreviouscommit()) {
+				Commit pointer = currentcomm;
+				Commit next = pointer;
+				next = next.prevobj();
+				if (traversed.contains(pointer.prev())) {
+					continue;
+				} else {
+					if (next.commitmessage().equals(targetmessage)) {
+						found.add(pointer.prev());
+						traversed.add(pointer.prev());
+					}
+					currentcomm = currentcomm.prevobj();
+				}
+			}
+		}
+		for (String id : found) {
+			System.out.println(id);
+		}
+	}
 	/** Helper method which actually merges two files. 
 	 * @throws IOException */
 	private static void mergefiles(String curr, String given, String key) throws IOException {
@@ -496,7 +604,7 @@ public class Main {
 			BranchData BranchData = new BranchData("master", initcommit);
 			storeasfile("BranchData", gitlet, BranchData);
 		} else {
-			// throw an error directory already exists	
+			System.out.println("A gitlet version-control system already exists in the current directory.");	
 		}
 	}
 	/** Reset method puts the branch back to the commit which is the input. 
@@ -605,7 +713,6 @@ public class Main {
 			out.close();
 		} catch (IOException excp) {}
 	}
-
 	/** Private static arraylist of strings which contains the names of all the files in staging area. */
 	private static ArrayList<String> stagingarea;
 }
