@@ -40,6 +40,10 @@ public class BranchData implements Serializable{
     	_branches.put(_current, Commit);
     }
     
+    public String getcommitname(String branch){
+        return _branches.get(branch);
+    }
+    
     /** Returns the SHA name of the head commit of the current branch. */
     public String getcurrhead() {
     	return _branches.get(_current);
@@ -107,6 +111,10 @@ public class BranchData implements Serializable{
     		return false;
     	}
     	return true;
+    }
+    
+    public HashMap<String, String> getBranches() {
+        return _branches;
     }
     
     /** A private list which contains the name of all the files which have been untracked. */

@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -168,11 +169,42 @@ public class Main {
             	if (args.length != 1) {
                     //throw an error		
             	}
+            	BranchData branches = getBDobject();
+            	HashSet<String> uniqueCommits = new HashSet<String>();
+            	for (String branchname: branches.getBranches().keySet()) {
+            	    Commit current = branches.getcommitobj(branchname);
+            	    if (uniqueCommits.contains(branches.getcommitname(branchname))) {
+            	        continue;
+            	    } else {
+            	        System.out.println("===");
+                        System.out.println("Commit " + branches.getcommitname(branchname));
+                        System.out.println(current.timestamp());
+                        System.out.println(current.commitmessage());
+                        uniqueCommits.add(branches.getcommitname(branchname));
+            	    }
+            	    while (current.haspreviouscommit()) {
+            	        Commit pointer = current;
+                	    if (uniqueCommits.contains(pointer.prev())) {
+                	        continue;
+                	    } else {
+                	        current = current.prevobj();
+                	        System.out.println();
+                    	    System.out.println("===");
+                            System.out.println("Commit " + pointer.prev());
+                            System.out.println(current.timestamp());
+                            System.out.println(current.commitmessage());
+                            uniqueCommits.add(pointer.prev());
+                	    }
+            	    }
+            	}   
+            	break;
+            	
             case "find":
             	if (args.length != 2) {
                     //throw an error		
             	}
             	String commitmessage2 = args[1];
+            	break;
             case "status":
             	if (args.length != 1) {
                     //throw an error		
