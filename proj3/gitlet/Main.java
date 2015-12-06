@@ -9,6 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.Set;
 //import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.omg.IOP.Encoding;
 
 import ucb.util.CommandArgs;
 
@@ -44,8 +47,9 @@ public class Main {
                     File stagingarea = new File(gitlet, ".staging");
                     stagingarea.mkdir();
                     Commit initialcommit = new Commit("initial commit", null);
-                    storeasfile("initcommit", gitlet, initialcommit);
-                    BranchData BranchData = new BranchData("master", "initcommit");
+                    String initcommit = new String(Utils.sha1(initialcommit.timestamp()));
+                    storeasfile(initcommit, gitlet, initialcommit);
+                    BranchData BranchData = new BranchData("master", initcommit);
                     storeasfile("BranchData", gitlet, BranchData);
                     
                 }
@@ -58,20 +62,7 @@ public class Main {
             		//throw an error
             	} else {
                     String filename = args[1];
-                    File herefile = new File(filename);
-                    if (herefile.exists()) {
-                	    File stagingarea = new File(".gitlet", ".staging");
-                        File added = new File(stagingarea, filename);
-            	        storeasfile(filename,stagingarea, added);
-            	        byte[] file = Utils.readContents(added);
-                        String hashcode = Utils.sha1(file);
-                        File tobeadded = new File(".gitlet", hashcode);
-						if (tobeadded.exists()) {
-                            added.delete();
-                    	} else {}
-                    } else {
-                       // throw an error file doesn't exist	
-                    }
+                    add(filename);
             	}
             	break;
             case "commit":
@@ -207,8 +198,9 @@ public class Main {
             	throw new IOException("No command with that name exists.");
         }
     }
-    /** Method which performs a merge. */
-    private static void merge(String given) {
+    /** Method which performs a merge. 
+     * @throws IOException */
+    private static void merge(String given) throws IOException {
     	BranchData bd = getBDobject();
     	if (bd.contains(given)) {
     		if (bd.iscurrent(given)) {
@@ -248,9 +240,11 @@ public class Main {
     			String currmapval = currmap.get(splitkey);
     			if (splithashval.equals(currmapval) && !splithashval.equals(givenmapval)) {
     				if (givenmapval.equals(null)) {
-    					// remove and untrack
+    					File rmfile = new File(currmapval);
+    					// maybe incomplete revisit this later
     				} else {
-    					//checkout file in given and stage it
+    				    checkoutone(givenmapval, bd);
+    				    add(splitkey);
     				}
     			}
     			if (!splithashval.equals(currmapval) && splithashval.equals(givenmapval)) {
@@ -264,15 +258,9 @@ public class Main {
     			if (!splithashval.equals(currmapval) && !splithashval.equals(givenmapval) 
     					&& !givenmapval.equals(currmapval)) {
     			    conflicts = true;
-    				if (currmapval.equals(null)) {
-    			    	// curr was deleted
-    			    } else if (givenmapval.equals(null)) {
-    			    	// given was deleted
-    			    } else {
-    			    	// merge curr and given
+    				mergefiles(currmapval, givenmapval, splitkey);
     			    }
-    			}
-    			}
+    		}
     		Set<String> keyset;
     		if (currmap.size() > givenmap.size()) {
     			keyset = currmap.keySet();
@@ -281,10 +269,15 @@ public class Main {
     		}
     		for (String key : keyset) {
     		    if (currmap.get(key).equals(null)) {
-    		    	// checkout givenmap.get(key) and stage
+    		    	checkoutone(key, bd);
+    		    	add(key);
     		    }
     		    if (givenmap.get(key).equals(null)) {
     		    	// do nothing
+    		    }
+    		    if (splitmap.get(key).equals(null)) {
+    		    	conflicts = true;
+    		    	mergefiles(currmap.get(key), givenmap.get(key), key);
     		    }
     		}
     		if (conflicts) {
@@ -324,19 +317,7 @@ public class Main {
     		BranchData branchdata = getBDobject();
     		if (args[1] == "--") {
     			String filename = args[2]; 	
-            	Commit headcommitobj = branchdata.getcurrobj();
-            	HashMap<String, String> map = headcommitobj.getmap();
-            	if (map.get(filename) != null) {
-            		File repofile = new File(".gitlet", map.get(filename));
-            		if (repofile.exists()) {
-            		    File tobeadded = new File(filename);
-            		    Utils.writeContents(tobeadded, Utils.readContents(repofile));
-            		} else {
-            			//throw object that the commit points to doesnt exist error.
-            		}
-            	} else {
-            		//throw file not exists error
-            	}
+            	checkoutone(filename, branchdata);
     		} else if (args.length != 2 && args[3] == "--") {
     			String filename = args[3];
     			String commitid = args[1];
@@ -408,8 +389,60 @@ public class Main {
     		}
     	}
     }
-    /** Reset method puts the branch back to the commit which is the input. */
-    private static void reset(String commitid) {
+    /** Helper method which actually merges two files. 
+     * @throws IOException */
+    private static void mergefiles(String curr, String given, String key) throws IOException {
+        File merged = new File(key);
+        merged.createNewFile();
+        String first = new String("<<<<<<< HEAD \n "
+        		+ "contents of file in current branch \n");
+        byte[] firstb = first.getBytes();
+        String second = new String("======= \n" + "contents of file in given branch \n"
+        		+ ">>>>>>>");
+        byte[] secondb = second.getBytes();
+        byte[] currb = new byte[0];
+        byte[] givenb = new byte[0];
+        if (!(curr == null)) {
+        	File curfile = new File(".gitlet", curr);
+            givenb = Utils.readContents(curfile);	
+        }
+        if (!(given == null)) {
+        	File givenfile = new File(".gitlet", given);
+        	givenb = Utils.readContents(givenfile);
+        }
+        
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+        outputStream.write(firstb);
+        outputStream.write(currb);
+        outputStream.write(secondb);
+        outputStream.write(givenb);
+        byte[] c = outputStream.toByteArray();
+        Utils.writeContents(merged, c);
+        }
+
+   
+    /**Checkout helper method which performs checkout of a single file. 
+     * @throws IOException */
+    private static void checkoutone(String filename, BranchData branchdata) throws IOException {
+    	Commit headcommitobj = branchdata.getcurrobj();
+    	HashMap<String, String> map = headcommitobj.getmap();
+    	if (map.get(filename) != null) {
+    		File repofile = new File(".gitlet", map.get(filename));
+    		if (repofile.exists()) {
+    		    File tobeadded = new File(filename);
+    		    Utils.writeContents(tobeadded, Utils.readContents(repofile));
+    		} else {
+    			//throw object that the commit points to doesnt exist error.
+    		}
+    	} else {
+    		//throw file not exists error
+    	}
+    	File gitlet = new File(".gitlet");
+    	storeasfile("BranchData", gitlet, branchdata);
+    }
+    /** Reset method puts the branch back to the commit which is the input. 
+     * @throws IOException */
+    private static void reset(String commitid) throws IOException {
         File commitf = new File(".gitlet", commitid);
         if (!commitf.exists()) {
         	System.out.print(" No commit with that id exists.");
@@ -418,6 +451,58 @@ public class Main {
         BranchData bd = getBDobject();
         Commit argcommit = getcommitobject(commitf);
         Commit currcommit = bd.getcurrobj();
+        HashMap<String, String> argmap = argcommit.getmap();
+        HashMap<String, String> currmap = currcommit.getmap();
+        File thisdir = new File(".");
+        File[] fileshere = thisdir.listFiles();
+        for (File file : fileshere) {
+            String name = file.getName();
+            if (!currmap.containsKey(name) && argmap.containsKey(name)) {
+            	System.out.println("There is an untracked file in the way; delete it or add it first.");
+            	return;
+            }
+        }
+        for (String key : currmap.keySet()) {
+            if (!argmap.containsKey(key)) {
+            	File rmfile = new File(key);
+            	rmfile.delete();
+            }
+        }
+        for (String key : argmap.keySet()) {
+            File addfile = new File(key);
+            if (!addfile.exists()) {
+            	addfile.createNewFile();
+            }
+            File branchfile = new File(".gitlet", argmap.get(key));
+            Utils.writeContents(addfile, Utils.readContents(branchfile));
+        }
+        File staging = new File(".gitlet", ".staging");
+        File[] tobestaged = staging.listFiles();
+        for (File file : tobestaged) {
+        	file.delete();
+        }
+        bd.setcurrhead(commitid);
+        File gitlet = new File(".gitlet");
+    	storeasfile("BranchData", gitlet, bd);
+    }
+    /** Method which performs the add functionality, takes in the name of the file as an arg. 
+     * @throws IOException */
+    public static void add(String filename) throws IOException {
+    	File herefile = new File(filename);
+        if (herefile.exists()) {
+    	    File stagingarea = new File(".gitlet", ".staging");
+            File added = new File(stagingarea, filename);
+	        storeasfile(filename,stagingarea, added);
+	        byte[] file = Utils.readContents(added);
+            String hashcode = Utils.sha1(file);
+            File tobeadded = new File(".gitlet", hashcode);
+			if (tobeadded.exists()) {
+                added.delete();
+        	} else {}
+        } else {
+           System.out.println(" File does not exist.");
+           return;
+        }
     }
     /** Method to convert a file object into a Commit object by reading the given file and deserializing it. */
     public static Commit getcommitobject(File file) {
