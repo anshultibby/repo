@@ -40,8 +40,12 @@ public class BranchData implements Serializable{
     	_branches.put(_current, Commit);
     }
     
-    public String getcommitname(String branch){
+    public String getcommitname(String branch) {
         return _branches.get(branch);
+    }
+    
+    public ArrayList<String> getUntracked() {
+        return _untracked;
     }
     
     /** Returns the SHA name of the head commit of the current branch. */

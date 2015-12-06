@@ -248,6 +248,43 @@ public class Main {
             	if (args.length != 1) {
                     //throw an error		
             	}
+            	BranchData statusBranch = getBDobject();
+            	System.out.println("=== Branches ===");
+            	String star = statusBranch.getcurrent();
+            	for (String branchname: statusBranch.getBranches().keySet()) {
+            	    if (star.equals(branchname)) {
+            	        branchname = "*" + star;
+            	    }
+            	    System.out.println(branchname);
+            	}
+            	
+            	System.out.println();
+            	System.out.println("=== Staged Files ===");
+            	File staging = new File(".gitlet", ".staging");
+            	File[] filenames = staging.listFiles();
+            	for (File file: filenames) {
+            	    System.out.println(file.getName());
+            	}
+            	System.out.println();
+            	System.out.println("=== Removed Files ===");
+            	for (String removed: statusBranch.getUntracked()) {
+            	    System.out.println(removed);
+            	}
+            	
+            	System.out.println();
+            	System.out.println("=== Modifications Not Staged for Commit ===");
+            	
+            	System.out.println();
+            	System.out.println("=== Untracked Files ===");
+            	File workingDir = new File(".");
+            	File[] workingfiles = workingDir.listFiles();
+            	for (File untracked: workingfiles) {
+            	    System.out.println(untracked);
+            	}
+            	
+            	
+            	break;
+            	
             case "checkout": 
             	checkout(args);
             	break;
