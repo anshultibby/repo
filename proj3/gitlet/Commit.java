@@ -36,7 +36,14 @@ public class Commit implements Serializable {
         }
         return false;
     }
-    
+    public boolean containsversion(String name, String hashcode) {
+        if (_blobs.containsKey(name)) {
+        	if (_blobs.get(name).equals(hashcode)) {
+        		return true;
+        	}
+        }
+        return false;
+    }
     public boolean haspreviouscommit() {
         return _previouscommit != null;
     }

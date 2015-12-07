@@ -980,11 +980,14 @@ public class Main {
      * @throws IOException */
     public static void add(String filename) throws IOException {
         File herefile = new File(filename);
+        BranchData bd = getBDobject();
         if (herefile.exists()) {
+        	Commit current = bd.getcurrobj();
             File stagingarea = new File(".gitlet", ".staging");
             File added = new File(stagingarea, filename);
-            File checker = new File(Utils.sha1(Utils.readContents(herefile)));
-            if (checker.exists()) {
+            String hash = Utils.sha1(Utils.readContents(herefile));
+            boolean checker = current.containsversion(filename, hash);
+            if (checker) {
                 return;
             }
             added.createNewFile();
