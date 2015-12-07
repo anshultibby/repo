@@ -375,7 +375,7 @@ public class Main {
         BranchData bd = getBDobject();
         if (bd.containsbranch(given)) {
             if (bd.iscurrent(given)) {
-                System.out.println("annot merge a branch with itself.");
+                System.out.println("Cannot merge a branch with itself.");
                 return;
             }
             Commit currcommit = bd.getcurrobj();
@@ -384,13 +384,13 @@ public class Main {
             System.out.println(currcommit.timestamp());
             System.out.println(givencommit.timestamp());
             if (currcommit.equals(givencommit)) {
-                System.out.println("Branches to be merged are at same commit.");
+                System.out.println("Given branch is an ancestor of the current branch.");
             }
             Commit prevofcurrent = currcommit;
             while (prevofcurrent.prev() != null) {
                 prevofcurrent = prevofcurrent.prevobj();
                 if (givencommit.equals(prevofcurrent)) {
-                    System.out.println("Branches to be merged are at same commit.");
+                    System.out.println("Given branch is an ancestor of the current branch.");
                     return;
                 }
             }
@@ -399,7 +399,7 @@ public class Main {
                 prevofgiven = prevofgiven.prevobj();
                 if (currcommit.equals(prevofgiven)) {
                     bd.setcurrhead(Utils.sha1(givencommit.timestamp())); 
-                    System.out.println("Fast-Forwarded.");
+                    System.out.println("Current branch fast-forwarded.");
                     return;
                 }
             }
