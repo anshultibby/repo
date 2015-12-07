@@ -413,6 +413,7 @@ public class Main {
 		branchdata.addcommit(commithashcode);
 		storeasfile("BranchData", gitlet, branchdata);
 	}
+	
 	/** Private method which handles remove file functionality. 
 	 * @throws IOException */
 	private static void remove(String filename2) throws IOException {
@@ -440,6 +441,7 @@ public class Main {
 		File gitlet2 = new File(".gitlet");
 		storeasfile("BranchData", gitlet2, branchdata);
 	}
+	
 	/** Private method which handles the status functionality. */
 	private static void status() {
 		BranchData statusBranch = getBDobject();
@@ -492,6 +494,7 @@ public class Main {
 		File gitlet = new File(".gitlet");
 		storeasfile("BranchData", gitlet,bd);
 	}
+	
 	/** Private method which handles log functionality. */
 	private static void log() {
 		BranchData headpointer = getBDobject();
@@ -511,6 +514,7 @@ public class Main {
 			System.out.println(commit.commitmessage());        	
 		}
 	}
+	
 	/** Private method which performs the branch functionality. 
 	 * @throws IOException */
 	private static void branch(String branchname) throws IOException {
@@ -519,15 +523,20 @@ public class Main {
 		File gitlet = new File(".gitlet");
 		storeasfile("BranchData", gitlet,bd);
 	}
+	
 	/** Private method which handles global-log functionality. */
 	private static void globallog() {
 		BranchData branches = getBDobject();
 		HashSet<String> uniqueCommits = new HashSet<String>();
+		boolean loopedonce = false;
 		for (String branchname: branches.getBranches().keySet()) {
 			Commit current = branches.getcommitobj(branchname);
 			if (uniqueCommits.contains(branches.getcommitname(branchname))) {
 				continue;
 			} else {
+			    if (loopedonce) {
+			        System.out.println();
+			    }
 				System.out.println("===");
 				System.out.println("Commit " + branches.getcommitname(branchname));
 				System.out.println(current.timestamp());
@@ -536,10 +545,10 @@ public class Main {
 			}
 			while (current.haspreviouscommit()) {
 				Commit pointer = current;
+				current = current.prevobj();
 				if (uniqueCommits.contains(pointer.prev())) {
 					continue;
 				} else {
-					current = current.prevobj();
 					System.out.println();
 					System.out.println("===");
 					System.out.println("Commit " + pointer.prev());
@@ -548,8 +557,10 @@ public class Main {
 					uniqueCommits.add(pointer.prev());
 				}
 			}
+			loopedonce = true;
 		}   
 	}
+	
 	/** Method which performs the find functionality. */
 	private static void find(String targetmessage) {
 		ArrayList<String> found = new ArrayList<String>();
