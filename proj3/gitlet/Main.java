@@ -333,8 +333,6 @@ public class Main {
 				if (branchdata.containsbranch(branchname)) {
 					Commit branchcommit = branchdata.getcommitobj(branchname);
 					Commit currcommit = branchdata.getcurrobj();
-					System.out.println(branchcommit.timestamp());
-					System.out.println(currcommit.timestamp());
 					HashMap<String, String> currmap = currcommit.getmap(); 
 					HashMap<String, String> branchmap = branchcommit.getmap();
 					File thisdir = new File(".");
@@ -422,7 +420,7 @@ public class Main {
 		File stagingarea = new File(".gitlet", ".staging");
 		BranchData branchdata = getBDobject();
 		String headcommit = branchdata.getcurrhead();
-		File currcommit = new File(".gitlet", headcommit);
+		File currcommit = new File(".gitlet/.commits", headcommit);
 		Commit currcommitobj = getcommitobject(currcommit);
 		if (currcommitobj.contains(filename2)) {
 			branchdata.untrack(filename2);
@@ -581,6 +579,7 @@ public class Main {
 				Commit next = pointer;
 				next = next.prevobj();
 				if (traversed.contains(pointer.prev())) {
+				    currentcomm = currentcomm.prevobj();
 					continue;
 				} else {
 					if (next.commitmessage().equals(targetmessage)) {
