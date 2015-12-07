@@ -651,7 +651,7 @@ public class Main {
         File stagingarea = new File(".gitlet", ".staging");
         BranchData branchdata = getBDobject();
         String headcommit = branchdata.getcurrhead();
-        File currcommit = new File(".gitlet", headcommit);
+        File currcommit = new File(".gitlet/.commits", headcommit);
         Commit currcommitobj = getcommitobject(currcommit);
         if (currcommitobj.contains(filename2)) {
             branchdata.untrack(filename2);
