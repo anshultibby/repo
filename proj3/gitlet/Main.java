@@ -843,11 +843,10 @@ public class Main {
     private static void mergefiles(String curr, String given, String key) throws IOException {
         File merged = new File(key);
         merged.createNewFile();
-        String first = new String("<<<<<<< HEAD\n"
-                + "contents of file in current branch \n");
+        String first = new String("<<<<<<< HEAD\n");
         byte[] firstb = first.getBytes();
-        String second = new String("=======\n" + "contents of file in given branch\n");
-        String third = new String ("\n>>>>>>>");
+        String second = new String("=======\n");
+        String third = new String (">>>>>>>");
         byte[] secondb = second.getBytes();
         byte[] thirdb = third.getBytes();
         byte[] currb = new byte[0];
@@ -1064,8 +1063,13 @@ public class Main {
             }
         }
     }
-    /** Method to convert an object s into a file of name n with a particular parent. */
-    private static void storeasfile(String name, File parent, Serializable s) throws IOException {
+    /** Method to convert an object s into a file of name
+     *  n with a particular parent.
+     * @param name = what the file is to be named as
+     * @param parent = the abstract pathname to parent
+     * @param s = the object being converted into a file. */
+    private static void storeasfile(String name, File parent, Serializable s)
+            throws IOException {
 
         File outFile = new File(parent, name);
         try {
@@ -1073,9 +1077,12 @@ public class Main {
                     new ObjectOutputStream(new FileOutputStream(outFile));
             out.writeObject(s);
             out.close();
-        } catch (IOException excp) {}
+        } catch (IOException excp) {
+            return;
+        }
     }
-    /** Private static arraylist of strings which contains the names of all the files in staging area. */
+    /** Private static arraylist of strings which contains
+     * the names of all the files in staging area. */
     private static ArrayList<String> stagingarea;
 }
 
