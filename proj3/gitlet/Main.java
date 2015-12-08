@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.nio.file.Files;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -687,17 +688,23 @@ public class Main {
         }
         System.out.println();
         System.out.println("=== Removed Files ===");
-        for (String removed: statusBranch.getUntracked()) {
-            System.out.println(removed);
+        Set<String> removing = statusBranch.getUntracked();
+        if (removing.size() != 0) {
+            String[] removal = new String[removing.size()];
+            removing.toArray(removal);
+            Arrays.sort(removal);
+            for (String str: removal) {
+                System.out.println(str);
+            }
         }
         System.out.println();
         System.out.println("=== Modifications Not Staged for Commit ===");
-
+        
         System.out.println();
         System.out.println("=== Untracked Files ===");
         File workingDir = new File(".");
-        File[] workingfiles = workingDir.listFiles();
-        for (File untracked: workingfiles) {
+        List<String> workingfiles = Utils.plainFilenamesIn(workingDir);
+        for (String untracked: workingfiles) {
             System.out.println(untracked);
         }
 
