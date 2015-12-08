@@ -814,7 +814,6 @@ public class Main {
     private static void log() {
         BranchData headpointer = getBDobject();
         Commit commit = headpointer.getcurrobj();
-
         System.out.println("===");
         System.out.println("Commit " + headpointer.getcurrhead());
         System.out.println(commit.timestamp());
@@ -874,7 +873,7 @@ public class Main {
         String first = new String("<<<<<<< HEAD\n");
         byte[] firstb = first.getBytes();
         String second = new String("=======\n");
-        String third = new String (">>>>>>>");
+        String third = new String (">>>>>>>\n");
         byte[] secondb = second.getBytes();
         byte[] thirdb = third.getBytes();
         byte[] currb = new byte[0];
@@ -949,8 +948,7 @@ public class Main {
                 public boolean accept(File dir, String name) {
                     int lastIndex = commitid.length();
                     // get extension
-                    String str = name.substring(lastIndex);
-
+                    String str = name.substring(0, lastIndex);
                     // match path name extension
                     if(str.equals(commitid))
                     {
@@ -1001,7 +999,7 @@ public class Main {
         for (File file : tobestaged) {
             file.delete();
         }
-        bd.setcurrhead(commitid);
+        bd.setcurrhead(commitidf.getName());
         File gitlet = new File(".gitlet");
         storeasfile("BranchData", gitlet, bd);
     }
