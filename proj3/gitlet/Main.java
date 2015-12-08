@@ -699,58 +699,67 @@ public class Main {
         }
         System.out.println();
         System.out.println("=== Modifications Not Staged for Commit ===");
-        ArrayList<String> Modified = new ArrayList<String>();
-        ArrayList<String> Deleted = new ArrayList<String>();
-        ArrayList<String> Tracked = new ArrayList<String>();
-        ArrayList<String> WorkingDir = new ArrayList<String>();
-        BranchData currBranch = getBDobject();
-        Commit currCommit = currBranch.getcurrobj();
-        HashMap<String, String> commitFiles = currCommit.getmap();
-        Set<String> hashStrings = currCommit.getmap().keySet();
-        File stagingfolder = new File(".gitlet", ".staging");
-        List<String> stagingfiles = Utils.plainFilenamesIn(stagingfolder);
-        File workDir = new File(".");
-        List<String> workingfiles = Utils.plainFilenamesIn(workDir);
-        for (String name: workingfiles) {
-            File temp = new File(name);
-            String temphash = Utils.sha1(Utils.readContents(temp));
-            if (hashStrings.contains(name) && (! commitFiles.get(name).equals(temphash))) {
-                Modified.add(name);
-            }
-            if (stagingfiles.contains(name)) {
-                File stagingtemp = new File(stagingfolder, name);
-                String staginghash = Utils.sha1(Utils.readContents(stagingtemp));
-                if (staginghash != temphash) {
-                    Modified.add(name);
-                }
-            }
-            if ((! currBranch.getUntracked().contains(name))
-                    && hashStrings.contains(name) 
-                    && (! workingfiles.contains(name))) {
-                Modified.add(name);
-            }
-        }
-        
-        for (String stagefile: stagingfiles) {
-            if (! workingfiles.contains(stagefile)) {
-                Deleted.add(stagefile);
-            }
-        }
-                 
-        for (String deletedfile: Deleted) {
-            System.out.println(deletedfile + " (deleted)");
-        }
-        
-        for (String modifiedfile: Modified) {
-            System.out.println(modifiedfile + " (modified)");
-        } 
+//        ArrayList<String> Modified = new ArrayList<String>();
+//        ArrayList<String> Deleted = new ArrayList<String>();
+//        ArrayList<String> Tracked = new ArrayList<String>();
+//        ArrayList<String> WorkingDir = new ArrayList<String>();
+//        BranchData currBranch = getBDobject();
+//        Commit currCommit = currBranch.getcurrobj();
+//        HashMap<String, String> commitFiles = currCommit.getmap();
+//        Set<String> hashStrings = currCommit.getmap().keySet();
+//        File stagingfolder = new File(".gitlet", ".staging");
+//        List<String> stagingfiles = Utils.plainFilenamesIn(stagingfolder);
+//        File workDir = new File(".");
+//        List<String> workingfiles = Utils.plainFilenamesIn(workDir);
+//        for (String name: workingfiles) {
+//            File temp = new File(name);
+//            String temphash = Utils.sha1(Utils.readContents(temp));
+//            if (hashStrings.contains(name) && (! commitFiles.get(name).equals(temphash))) {
+//                Modified.add(name);
+//            }
+//            if (stagingfiles.contains(name)) {
+//                File stagingtemp = new File(stagingfolder, name);
+//                String staginghash = Utils.sha1(Utils.readContents(stagingtemp));
+//                if (staginghash != temphash) {
+//                    Modified.add(name);
+//                }
+//            }
+//            if ((! currBranch.getUntracked().contains(name))
+//                    && hashStrings.contains(name) 
+//                    && (! workingfiles.contains(name))) {
+//                Modified.add(name);
+//            }
+//        }
+//        
+//        for (String stagefile: stagingfiles) {
+//            if (! workingfiles.contains(stagefile)) {
+//                Deleted.add(stagefile);
+//            }
+//        }
+//                 
+//        for (String deletedfile: Deleted) {
+//            System.out.println(deletedfile + " (deleted)");
+//        }
+//        
+//        for (String modifiedfile: Modified) {
+//            System.out.println(modifiedfile + " (modified)");
+//        } 
         System.out.println();
         System.out.println("=== Untracked Files ===");
-        File workingDir = new File(".");
-        List<String> workingdirfiles = Utils.plainFilenamesIn(workingDir);
-        for (String untracked: workingdirfiles) {
-            System.out.println(untracked);
-        }
+//        File allCommits = new File(".gitlet", ".commits");
+//        List<String> allCommitFiles = Utils.plainFilenamesIn(allCommits);
+//        ArrayList<String> commitNames = new ArrayList<String>();
+//        File workingDir = new File(".");
+//        List<String> workingdirfiles = Utils.plainFilenamesIn(workingDir);
+//        for (String untracked: workingdirfiles) {
+//            File checkCommit = new File(untracked);
+//            String tempCommitID = Utils.sha1(Utils.readContents(checkCommit));
+//            if ((! stagingfiles.contains(untracked)) || currBranch.getUntracked().contains(untracked)
+//                    || (! commitNames.contains(tempCommitID))) {
+//                System.out.println(untracked);
+//            }
+//        }
+        System.out.println();
 
     }
 
