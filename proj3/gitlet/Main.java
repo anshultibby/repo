@@ -679,13 +679,14 @@ public class Main {
                 System.out.println(branchname);
             }
         }
+        System.out.println();
         System.out.println("=== Staged Files ===");
         File staging = new File(".gitlet", ".staging");
         List<String> filenames = Utils.plainFilenamesIn(staging);
         for (String name: filenames) {
             System.out.println(name);
         }
-
+        System.out.println();
         System.out.println("=== Removed Files ===");
         Set<String> removing = statusBranch.getUntracked();
         if (removing.size() != 0) {
@@ -696,6 +697,7 @@ public class Main {
                 System.out.println(str);
             }
         }
+        System.out.println();
         System.out.println("=== Modifications Not Staged for Commit ===");
         ArrayList<String> Modified = new ArrayList<String>();
         ArrayList<String> Deleted = new ArrayList<String>();
@@ -741,9 +743,8 @@ public class Main {
         
         for (String modifiedfile: Modified) {
             System.out.println(modifiedfile + " (modified)");
-        }
-        
-          
+        } 
+        System.out.println();
         System.out.println("=== Untracked Files ===");
         File workingDir = new File(".");
         List<String> workingdirfiles = Utils.plainFilenamesIn(workingDir);
