@@ -475,15 +475,18 @@ public class Main {
     private static Commit findsplit(Commit current, Commit given) {
         Commit prevofcurrent = current;
         Commit prevofgiven = given;
-        while (prevofcurrent.prev() != null) {
+        HashSet<Commit> checked = new HashSet<Commit>();
+        checked.add(prevofcurrent);
+        while (prevofcurrent.haspreviouscommit()) {
             prevofcurrent = prevofcurrent.prevobj();
-            while (prevofgiven.prev() != null) {
-                prevofgiven = prevofgiven.prevobj();
-                if (prevofcurrent.timestamp().equals(prevofgiven.timestamp())) {
-                    return prevofcurrent;
+            checked.add(prevofcurrent);
+        }
+        while (prevofgiven.haspreviouscommit()) {
+            prevofgiven = prevofgiven.prevobj();
+            if (checked.contains((prevofgiven))) {
+                return prevofcurrent;
                 }
             }
-        }
         return null;
     }
     /** Method which takes in args and performs checkout procedure. 
@@ -643,10 +646,14 @@ public class Main {
         File currcommit = new File(".gitlet/.commits", headcommit);
         Commit currcommitobj = getcommitobject(currcommit);
         if (currcommitobj.contains(filename2)) {
+            if (branchdata.contains(filename2)) {
+                remove = false;
+            } else {
+            remove = true;
+            }
             branchdata.untrack(filename2);
             Utils.restrictedDelete(removed);
-            remove = true;
-        }
+            }
         File stagedfile = new File(stagingarea, filename2);
         if (stagedfile.exists()) {
             stagedfile.delete();
@@ -767,6 +774,9 @@ public class Main {
      * @throws IOException */
     private static void branch(String branchname) throws IOException {
         BranchData bd = getBDobject();
+        if (bd.containsbranch(branchname)) {
+        	System.err.println("A branch with that name already exists.");
+        }
         bd.addbranch(branchname, bd.getcurrhead());
         File gitlet = new File(".gitlet");
         storeasfile("BranchData", gitlet,bd);
