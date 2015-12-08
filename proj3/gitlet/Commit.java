@@ -62,6 +62,10 @@ public class Commit implements Serializable {
         return _blobs;
     }
     
+    public String commitname(String timestamp) {
+        return Utils.sha1(timestamp);
+    }
+    
     /** Private date variable which stores the timestamp. */
     private String _timestamp;
     /** Private string variable which contains the commit message. */

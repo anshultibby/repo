@@ -699,75 +699,35 @@ public class Main {
 
     /** Method which performs the find functionality. */
     private static void find(String targetmessage) {
-        ArrayList<String> found = new ArrayList<String>();
-        ArrayList<String> traversed = new ArrayList<String>();
-        BranchData findbranches = getBDobject();
-        for (String branchname: findbranches.getBranches().keySet()) {
-            Commit currentcomm = findbranches.getcommitobj(branchname);
-            if (traversed.contains(findbranches.getcommitname(branchname))) {
-                continue;
-            } else {
-                if (currentcomm.commitmessage().equals(targetmessage)) {
-                    found.add(findbranches.getcommitname(branchname));
-                    traversed.add(findbranches.getcommitname(branchname));
-                }
-            }
-            while (currentcomm.haspreviouscommit()) {
-                Commit pointer = currentcomm;
-                Commit next = pointer;
-                next = next.prevobj();
-                if (traversed.contains(pointer.prev())) {
-                    currentcomm = currentcomm.prevobj();
-                    continue;
-                } else {
-                    if (next.commitmessage().equals(targetmessage)) {
-                        found.add(pointer.prev());
-                        traversed.add(pointer.prev());
-                    }
-                    currentcomm = currentcomm.prevobj();
-                }
+        boolean noneFound = true;
+        File commits = new File(".gitlet", ".commits");
+        File[] commitfiles = commits.listFiles();
+        for (File commit: commitfiles) {
+            Commit current = getcommitobject(commit);
+            if (current.commitmessage().equals(targetmessage)){
+                noneFound = false;
+                System.out.println(current.commitname(current.timestamp()));
             }
         }
-        for (String id : found) {
-            System.out.println(id);
+        if (noneFound) {
+            System.out.println("Found no commit with that message.");
         }
     }
+    
     /** Private method which handles global-log functionality. */
-    private static void globallog() {
-        BranchData branches = getBDobject();
-        HashSet<String> uniqueCommits = new HashSet<String>();
-        boolean loopedonce = false;
-        for (String branchname: branches.getBranches().keySet()) {
-            Commit current = branches.getcommitobj(branchname);
-            if (uniqueCommits.contains(branches.getcommitname(branchname))) {
-                continue;
-            } else {
-                if (loopedonce) {
-                    System.out.println();
-                }
-                System.out.println("===");
-                System.out.println("Commit " + branches.getcommitname(branchname));
-                System.out.println(current.timestamp());
-                System.out.println(current.commitmessage());
-                uniqueCommits.add(branches.getcommitname(branchname));
-            }
-            while (current.haspreviouscommit()) {
-                Commit pointer = current;
-                current = current.prevobj();
-                if (uniqueCommits.contains(pointer.prev())) {
-                    continue;
-                } else {
-                    System.out.println();
-                    System.out.println("===");
-                    System.out.println("Commit " + pointer.prev());
-                    System.out.println(current.timestamp());
-                    System.out.println(current.commitmessage());
-                    uniqueCommits.add(pointer.prev());
-                }
-            }
-            loopedonce = true;
-        }   
+    private static void globallog() {  
+        File commits = new File(".gitlet", ".commits");
+        File[] commitfiles = commits.listFiles();
+        for (File commit: commitfiles) {
+            Commit current = getcommitobject(commit);
+            System.out.println("===");
+            System.out.println("Commit " + current.commitname(current.timestamp()));
+            System.out.println(current.timestamp());
+            System.out.println(current.commitmessage());
+            System.out.println();
+        }
     }
+    
     /** Private method which performs the rm-branch functionality. 
      * @throws IOException */
     private static void rmbranch(String branchname2) throws IOException {
@@ -801,6 +761,7 @@ public class Main {
             System.out.println(commit.timestamp());
             System.out.println(commit.commitmessage());         
         }
+        System.out.println();
     }
     /** Private method which performs the branch functionality. 
      * @throws IOException */
