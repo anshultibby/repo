@@ -864,7 +864,7 @@ public class Main {
         String first = new String("<<<<<<< HEAD\n");
         byte[] firstb = first.getBytes();
         String second = new String("=======\n");
-        String third = new String (">>>>>>>");
+        String third = new String (">>>>>>>\n");
         byte[] secondb = second.getBytes();
         byte[] thirdb = third.getBytes();
         byte[] currb = new byte[0];
