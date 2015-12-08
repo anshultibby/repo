@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class BranchData implements Serializable{
     
     public BranchData(){ 
         _branches = new HashMap<String, String>();
-        _untracked = new ArrayList<String>();
+        _untracked = new HashSet<String>();
         _remotes = new HashMap<String, String>();
         _remotes.put("local", ".");
     }
@@ -17,7 +18,7 @@ public class BranchData implements Serializable{
     public BranchData(String Branch, String Commit) {
         _branches = new HashMap<String, String>();
         _remotes = new HashMap<String, String>();
-        _untracked = new ArrayList<String>();
+        _untracked = new HashSet<String>();
         _branches.put(Branch, Commit);
         _current = Branch;
         _remotes.put("local", ".");
@@ -61,7 +62,7 @@ public class BranchData implements Serializable{
         return _branches.get(branch);
     }
     
-    public ArrayList<String> getUntracked() {
+    public HashSet<String> getUntracked() {
         return _untracked;
     }
     
@@ -126,6 +127,7 @@ public class BranchData implements Serializable{
         }
         return false;
     }
+    
     /** Boolean for whether any files have been marked for being untracked. */
     public boolean hasuntracked() {
         if (_untracked.size() == 0) {
@@ -140,7 +142,7 @@ public class BranchData implements Serializable{
     /** A HashMap which keeps track of all remote branches and the local branch. */
     private HashMap<String, String> _remotes;
     /** A private list which contains the name of all the files which have been untracked. */
-    private ArrayList<String> _untracked;
+    private HashSet<String> _untracked;
     /** Private variable which stores the name (the key reference for our map) of the current branch. */
     private String _current;
     /** Private HashMap where the keys are the names of the branches and references 
