@@ -15,6 +15,7 @@ import java.nio.file.Files;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -673,20 +674,25 @@ public class Main {
         BranchData statusBranch = getBDobject();
         System.out.println("=== Branches ===");
         String star = statusBranch.getcurrent();
-        for (String branchname: statusBranch.getBranches().keySet()) {
-            if (star.equals(branchname)) {
-                branchname = "*" + star;
+        Set<String> branches = statusBranch.getBranches().keySet();
+        if (branches.size() != 0) {
+            String[] branchesarray = new String[branches.size()];
+            branches.toArray(branchesarray);
+            Arrays.sort(branchesarray);
+            for (String branchname: branchesarray) {         
+                if (star.equals(branchname)) {
+                    branchname = "*" + star;
+                }
+                System.out.println(branchname);
             }
-            System.out.println(branchname);
         }
-        System.out.println();
         System.out.println("=== Staged Files ===");
         File staging = new File(".gitlet", ".staging");
-        File[] filenames = staging.listFiles();
-        for (File file: filenames) {
-            System.out.println(file.getName());
+        List<String> filenames = Utils.plainFilenamesIn(staging);
+        for (String name: filenames) {
+            System.out.println(name);
         }
-        System.out.println();
+
         System.out.println("=== Removed Files ===");
         Set<String> removing = statusBranch.getUntracked();
         if (removing.size() != 0) {
@@ -697,14 +703,40 @@ public class Main {
                 System.out.println(str);
             }
         }
-        System.out.println();
         System.out.println("=== Modifications Not Staged for Commit ===");
+        ArrayList<String> Modified = new ArrayList<String>();
+        ArrayList<String> Deleted = new ArrayList<String>();
+        ArrayList<String> Tracked = new ArrayList<String>();
+        ArrayList<String> WorkingDir = new ArrayList<String>();
+        BranchData currBranch = getBDobject();
+        Commit currCommit = currBranch.getcurrobj();
+        HashMap<String, String> commitFiles = currCommit.getmap();
+        Set<String> hashStrings = currCommit.getmap().keySet();
+        File workDir = new File(".");
+        List<String> workingfiles = Utils.plainFilenamesIn(workDir);
+        for (String name: workingfiles) {
+            File temp = new File(name);
+            String temphash = Utils.sha1(Utils.readContents(temp));
+            if (hashStrings.contains(name) && (! commitFiles.get(name).equals(temphash))) {
+                Modified.add(name);
+            }
+        }
+            
+            
+            
+        for (String deletedfile: Deleted) {
+            System.out.println(deletedfile + " (deleted)");
+        }
         
-        System.out.println();
+        for (String modifiedfile: Modified) {
+            System.out.println(modifiedfile + " (modified)");
+        }
+        
+          
         System.out.println("=== Untracked Files ===");
         File workingDir = new File(".");
-        List<String> workingfiles = Utils.plainFilenamesIn(workingDir);
-        for (String untracked: workingfiles) {
+        List<String> workingdirfiles = Utils.plainFilenamesIn(workingDir);
+        for (String untracked: workingdirfiles) {
             System.out.println(untracked);
         }
 
