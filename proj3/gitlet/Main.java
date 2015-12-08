@@ -705,6 +705,8 @@ public class Main {
         Commit currCommit = currBranch.getcurrobj();
         HashMap<String, String> commitFiles = currCommit.getmap();
         Set<String> hashStrings = currCommit.getmap().keySet();
+        File stagingfolder = new File(".gitlet", ".staging");
+        List<String> stagingfiles = Utils.plainFilenamesIn(stagingfolder);
         File workDir = new File(".");
         List<String> workingfiles = Utils.plainFilenamesIn(workDir);
         for (String name: workingfiles) {
@@ -713,10 +715,26 @@ public class Main {
             if (hashStrings.contains(name) && (! commitFiles.get(name).equals(temphash))) {
                 Modified.add(name);
             }
+            if (stagingfiles.contains(name)) {
+                File stagingtemp = new File(stagingfolder, name);
+                String staginghash = Utils.sha1(Utils.readContents(stagingtemp));
+                if (staginghash != temphash) {
+                    Modified.add(name);
+                }
+            }
+            if ((! currBranch.getUntracked().contains(name))
+                    && hashStrings.contains(name) 
+                    && (! workingfiles.contains(name))) {
+                Modified.add(name);
+            }
         }
-            
-            
-            
+        
+        for (String stagefile: stagingfiles) {
+            if (! workingfiles.contains(stagefile)) {
+                Deleted.add(stagefile);
+            }
+        }
+                 
         for (String deletedfile: Deleted) {
             System.out.println(deletedfile + " (deleted)");
         }
