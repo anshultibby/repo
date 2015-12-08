@@ -559,33 +559,26 @@ public class Main {
                     Commit currcommit = branchdata.getcurrobj();
                     HashMap<String, String> currmap = currcommit.getmap(); 
                     HashMap<String, String> branchmap = branchcommit.getmap();
-                    File thisdir = new File(".");
-                    File[] fileshere = thisdir.listFiles();
-                    for (File file : fileshere) {
-                        String name = file.getName();
-                        if (!currmap.containsKey(name) && branchmap.containsKey(name)) {
-                            System.err.println("There is an untracked file in the way; delete it or add it first.");
-                            return;
-                        }
+					for (String key : branchmap.keySet()) {
+					    File addfile = new File(key);
+					    if (addfile.exists() && !currmap.containsKey(key)) {
+					        System.err.println("There is an untracked file in the way; delete it or add it first.");
+					        return;
+			            }
+				        addfile.delete();
+                        addfile.createNewFile();
+                        File branchfile = new File(".gitlet", branchmap.get(key));
+                        Utils.writeContents(addfile, Utils.readContents(branchfile));
                     }
                     for (String key : currmap.keySet()) {
                         if (!branchmap.containsKey(key)) {
                             File rmfile = new File(key);
                             rmfile.delete();
                         }
-                    }
-                    for (String key : branchmap.keySet()) {
-                        File addfile = new File(key);
-                        addfile.delete();
-                        addfile.createNewFile();
-                        File branchfile = new File(".gitlet", branchmap.get(key));
-                        Utils.writeContents(addfile, Utils.readContents(branchfile));
-                    }
+                    }   
                     File staging = new File(".gitlet", ".staging");
-                    File[] tobestaged = staging.listFiles();
-                    for (File file : tobestaged) {
-                        file.delete();
-                    }
+                    staging.delete();
+                    staging.mkdir();
                     branchdata.setcurrent(branchname);
                     File gitlet = new File(".gitlet");
                     storeasfile("BranchData", gitlet, branchdata);
@@ -958,6 +951,7 @@ public class Main {
                 added.createNewFile();
                 Utils.writeContents(added, Utils.readContents(herefile));
                 storeasfile("BranchData", gitlet, bd);
+                return;
         	}
             Commit current = bd.getcurrobj();
             File stagingarea = new File(".gitlet", ".staging");
@@ -972,9 +966,6 @@ public class Main {
             byte[] file = Utils.readContents(added);
             String hashcode = Utils.sha1(file);
             File tobeadded = new File(".gitlet", hashcode);
-            if (tobeadded.exists()) {
-                added.delete();
-            } else {}
         } else {
             System.err.println("File does not exist.");
             return;
