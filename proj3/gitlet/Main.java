@@ -965,6 +965,7 @@ public class Main {
                 added.createNewFile();
                 Utils.writeContents(added, Utils.readContents(herefile));
                 storeasfile("BranchData", gitlet, bd);
+                return;
         	}
             Commit current = bd.getcurrobj();
             File stagingarea = new File(".gitlet", ".staging");
@@ -979,9 +980,6 @@ public class Main {
             byte[] file = Utils.readContents(added);
             String hashcode = Utils.sha1(file);
             File tobeadded = new File(".gitlet", hashcode);
-            if (tobeadded.exists()) {
-                added.delete();
-            } else {}
         } else {
             System.err.println("File does not exist.");
             return;
