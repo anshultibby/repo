@@ -951,6 +951,14 @@ public class Main {
         File herefile = new File(filename);
         BranchData bd = getBDobject();
         if (herefile.exists()) {
+        	if (bd.contains(filename)) {
+        		File gitlet = new File(".gitlet");
+        		File stagingarea = new File(".gitlet", ".staging");
+                File added = new File(stagingarea, filename);
+                added.createNewFile();
+                Utils.writeContents(added, Utils.readContents(herefile));
+                storeasfile("BranchData", gitlet, bd);
+        	}
             Commit current = bd.getcurrobj();
             File stagingarea = new File(".gitlet", ".staging");
             File added = new File(stagingarea, filename);
