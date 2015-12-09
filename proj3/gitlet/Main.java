@@ -596,6 +596,7 @@ public class Main {
                         File repofile = new File(".gitlet", map.get(filename));
                         if (repofile.exists()) {
                             File tobeadded = new File(filename);
+                            tobeadded.createNewFile();
                             Utils.writeContents(tobeadded,
                                     Utils.readContents(repofile));
                         } else {
