@@ -906,7 +906,7 @@ public class Main {
             System.out.println(commit.timestamp() + " ");
             System.out.println(commit.commitmessage() + " ");
         }
-        System.out.println();
+//        System.out.println();
     }
 
     /**
