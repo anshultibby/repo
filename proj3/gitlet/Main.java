@@ -893,6 +893,7 @@ public class Main {
     private static void log() {
         BranchData headpointer = getBDobject();
         Commit commit = headpointer.getcurrobj();
+        System.out.println();
         System.out.println("===");
         System.out.println("Commit " + headpointer.getcurrhead());
         System.out.println(commit.timestamp());
