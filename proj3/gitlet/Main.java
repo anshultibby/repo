@@ -432,6 +432,7 @@ public class Main {
         File[] stagingis = staging.listFiles();
         if (stagingis.length != 0) {
             System.err.println("You have uncommitted changes.");
+            return;
         }
 
         BranchData bd = getBDobject();
@@ -445,6 +446,7 @@ public class Main {
             if (currcommit.equals(givencommit)) {
                 System.err.println("Given branch is an"
                         + " ancestor of the current branch.");
+                return;
             }
             Commit prevofcurrent = currcommit;
             while (prevofcurrent.prev() != null) {
@@ -484,7 +486,7 @@ public class Main {
                         if (givenmapval.equals(null)) {
                             remove(splithashval);
                         } else {
-                            checkoutone(givenmapval, bd);
+                            checkoutone(givenmapval, bd, false);
                             add(splitkey);
                         }
                     }
@@ -508,8 +510,8 @@ public class Main {
                 keyset = givenmap.keySet();
             }
             for (String key : keyset) {
-                if (currmap.get(key).equals(null)) {
-                    checkoutone(key, bd);
+                if (currmap.get(key) == null) {
+                    checkoutone(key, bd, false);
                     add(key);
                 }
                 if (givenmap.get(key) == null) {
@@ -522,10 +524,12 @@ public class Main {
             }
             if (conflicts) {
                 System.err.println("Encountered a merge conflict.");
+                return;
             } else {
                 String message = new String("Merged "
                         + bd.getcurrent() + " with" + given);
                 commit(message);
+                return;
             }
         } else {
             System.err.println(" A branch with that name does not exist.");
@@ -565,7 +569,7 @@ public class Main {
             BranchData branchdata = getBDobject();
             if (args[1].equals("--")) {
                 String filename = args[2];
-                checkoutone(filename, branchdata);
+                checkoutone(filename, branchdata, true);
                 return;
             } else if (args.length > 2 && args[2].equals("--")) {
                 String filename = args[3];
@@ -1003,7 +1007,7 @@ public class Main {
      * @throws IOException
      */
     private static void checkoutone(String filename,
-            BranchData branchdata) throws IOException {
+            BranchData branchdata, boolean print) throws IOException {
         Commit headcommitobj = branchdata.getcurrobj();
         HashMap<String, String> map = headcommitobj.getmap();
         if (map.get(filename) != null) {
@@ -1014,7 +1018,10 @@ public class Main {
                 Utils.writeContents(tobeadded, Utils.readContents(repofile));
             }
         } else {
-            System.err.print("File does not exist in that commit.");
+        	if (print) {
+            System.err.println("File does not exist in that commit.");
+            return;
+        	}
         }
         File gitlet = new File(".gitlet");
         storeasfile("BranchData", gitlet, branchdata);
