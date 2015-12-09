@@ -566,6 +566,7 @@ public class Main {
             if (args[1].equals("--")) {
                 String filename = args[2];
                 checkoutone(filename, branchdata);
+                return;
             } else if (args.length > 2 && args[2].equals("--")) {
                 String filename = args[3];
                 String commitid = args[1];
