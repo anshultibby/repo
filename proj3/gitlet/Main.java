@@ -364,24 +364,24 @@ public class Main {
         boolean hashistory = false;
         Commit currhead = bd.getcurrobj();
         if (!remotebd.containsbranch(branchname)) {
-            remotebd.addbranch(branchname, Utils.sha1(currhead.timestamp()));
+            remotebd.addbranch(branchname, currhead.shaname());
             writecommits(remotename, currhead, null);
         }
         Commit remotehead = remotebd.getcommitobj(branchname);
-        if (remotehead.timestamp().equals(currhead.timestamp())) {
+        if (remotehead.shaname().equals(currhead.shaname())) {
             return;
         }
         Commit loophead = currhead;
         while (loophead.haspreviouscommit()) {
             loophead = currhead.prevremoteobj(remotename);
-            if (currhead.timestamp().equals(remotehead.timestamp())) {
+            if (currhead.shaname().equals(remotehead.shaname())) {
                 hashistory = true;
                 break;
             }
         }
         if (hashistory) {
             writecommits(remotename, currhead,
-                    Utils.sha1(loophead.timestamp()));
+                    loophead.shaname());
         } else {
             System.err.println("Please pull down"
                     + " remote changes before pushing.");
@@ -408,7 +408,7 @@ public class Main {
         Commit remoteheadbranch = remotebd.getcommitobj(branchname);
         fetchfiles(remotename, remoteheadbranch, branchname);
         String branch = new String(remotename + "" + "/" + "" + branchname);
-        bd.addbranch(branch, Utils.sha1(remoteheadbranch.commitmessage()));
+        bd.addbranch(branch, remoteheadbranch.shaname());
         File gitlet = new File(".gitlet");
         storeasfile("BranchData", gitlet, bd);
     }
@@ -459,7 +459,7 @@ public class Main {
             while (prevofgiven.prev() != null) {
                 prevofgiven = prevofgiven.prevobj();
                 if (currcommit.equals(prevofgiven)) {
-                    bd.setcurrhead(Utils.sha1(givencommit.timestamp()));
+                    bd.setcurrhead(givencommit.shaname());
                     System.err.println("Current branch fast-forwarded.");
                     return;
                 }
@@ -693,7 +693,7 @@ public class Main {
             Utils.writeContents(commitedfile, Utils.readContents(stagedfile));
             stagedfile.delete();
         }
-        String commithashcode = Utils.sha1(thiscommit.timestamp());
+        String commithashcode = thiscommit.shaname();
         File gitlet = new File(".gitlet");
         File commits = new File(".gitlet", ".commits");
         storeasfile(commithashcode, commits, thiscommit);
@@ -847,7 +847,7 @@ public class Main {
             Commit current = getcommitobject(commit);
             if (current.commitmessage().equals(targetmessage)) {
                 noneFound = false;
-                System.out.println(current.commitname(current.timestamp()) + " ");
+                System.out.println(current.shaname());
             }
         }
         if (noneFound) {
@@ -861,11 +861,11 @@ public class Main {
         File[] commitfiles = commits.listFiles();
         for (File commit : commitfiles) {
             Commit current = getcommitobject(commit);
-            System.out.println("=== ");
+            System.out.println("===");
             System.out.println("Commit "
-                    + current.commitname(current.timestamp()) + " ");
-            System.out.println(current.timestamp() + " ");
-            System.out.println(current.commitmessage() + " ");
+                    + current.shaname());
+            System.out.println(current.timestamp());
+            System.out.println(current.commitmessage());
             System.out.println();
         }
     }
@@ -933,7 +933,7 @@ public class Main {
             Commit headcommit, String branchname) throws IOException {
         File gitlet = new File(pathname, ".gitlet");
         File commits = new File(gitlet, ".commits");
-        storeasfile(Utils.sha1(headcommit.timestamp()), commits, headcommit);
+        storeasfile(headcommit.shaname(), commits, headcommit);
         HashMap<String, String> commitmap = headcommit.getmap();
         for (String file : commitmap.keySet()) {
             File fileR = new File(pathname, file);
@@ -942,7 +942,7 @@ public class Main {
         }
         while (headcommit.haspreviouscommit()) {
             Commit prevcommit = headcommit.prevremoteobj(pathname);
-            String prev = Utils.sha1(prevcommit.timestamp());
+            String prev = prevcommit.shaname();
             HashMap<String, String> commitmap2 = prevcommit.getmap();
             for (String file : commitmap2.keySet()) {
                 File fileR = new File(pathname, file);
@@ -1024,7 +1024,7 @@ public class Main {
             commits.mkdir();
             Commit initialcommit = new Commit("initial commit", null);
             String initcommit =
-                    new String(Utils.sha1(initialcommit.timestamp()));
+                    initialcommit.shaname();
             storeasfile(initcommit, commits, initialcommit);
             BranchData branchData = new BranchData("master", initcommit);
             storeasfile("BranchData", gitlet, branchData);
@@ -1204,10 +1204,10 @@ public class Main {
             Commit headcommit, String upto) throws IOException {
         File gitlet = new File(pathname, ".gitlet");
         File commits = new File(gitlet, ".commits");
-        storeasfile(Utils.sha1(headcommit.timestamp()), commits, headcommit);
+        storeasfile(headcommit.shaname(), commits, headcommit);
         while (headcommit.haspreviouscommit()) {
             Commit prevcommit = headcommit.prevremoteobj(pathname);
-            String prev = Utils.sha1(prevcommit.timestamp());
+            String prev = prevcommit.shaname();
             if (upto != null) {
                 if (prev.equals(upto)) {
                     storeasfile(prev, commits, prevcommit);
