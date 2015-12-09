@@ -603,17 +603,16 @@ public class Main {
                             
                             Utils.writeContents(tobeadded,
                                     Utils.readContents(repofile));
-                        } else {
-                            System.err.println("No commit "
-                                    + "with that id exists.");
-                            return;
                         }
                     } else {
                         System.err.println("File does not "
                                 + "exist in that commit.");
                         return;
                     }
-
+                } else {
+                    System.err.println("No commit "
+                            + "with that id exists.");
+                    return;
                 }
             } else if (args.length == 2) {
                 String branchname = args[1];
