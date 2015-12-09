@@ -772,7 +772,7 @@ public class Main {
             }
         }
         System.out.println();
-        System.out.println("=== Modifications Not Staged for Commit ===");
+        System.out.println("=== Modifications Not Staged For Commit ===");
         // ArrayList<String> Modified = new ArrayList<String>();
         // ArrayList<String> Deleted = new ArrayList<String>();
         // ArrayList<String> Tracked = new ArrayList<String>();
@@ -835,11 +835,10 @@ public class Main {
         // System.out.println(untracked);
         // }
         // }
-        System.out.println();
 
     }
 
-    /** Method which performs the find functionality. */
+    /** Method which locates all the commits with a TARGETMESSAGE. */
     private static void find(String targetmessage) {
         boolean noneFound = true;
         File commits = new File(".gitlet", ".commits");
@@ -1238,10 +1237,4 @@ public class Main {
             return;
         }
     }
-
-    /**
-     * Private static arraylist of strings which contains the names of all the
-     * files in staging area.
-     */
-    private static ArrayList<String> stagingarea;
 }
