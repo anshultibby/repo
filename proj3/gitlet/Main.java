@@ -771,7 +771,7 @@ public class Main {
             }
         }
         System.out.println();
-        System.out.println("=== Modifications Not Staged for Commit ===");
+        System.out.println("=== Modifications Not Staged For Commit ===");
         // ArrayList<String> Modified = new ArrayList<String>();
         // ArrayList<String> Deleted = new ArrayList<String>();
         // ArrayList<String> Tracked = new ArrayList<String>();
