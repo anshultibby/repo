@@ -847,7 +847,7 @@ public class Main {
             Commit current = getcommitobject(commit);
             if (current.commitmessage().equals(targetmessage)) {
                 noneFound = false;
-                System.out.println(current.commitname(current.timestamp()));
+                System.out.println(current.commitname(current.timestamp()) + " ");
             }
         }
         if (noneFound) {
@@ -861,11 +861,11 @@ public class Main {
         File[] commitfiles = commits.listFiles();
         for (File commit : commitfiles) {
             Commit current = getcommitobject(commit);
-            System.out.println("===");
+            System.out.println("=== ");
             System.out.println("Commit "
-                    + current.commitname(current.timestamp()));
-            System.out.println(current.timestamp());
-            System.out.println(current.commitmessage());
+                    + current.commitname(current.timestamp()) + " ");
+            System.out.println(current.timestamp() + " ");
+            System.out.println(current.commitmessage() + " ");
             System.out.println();
         }
     }
@@ -893,20 +893,20 @@ public class Main {
     private static void log() {
         BranchData headpointer = getBDobject();
         Commit commit = headpointer.getcurrobj();
-        System.out.println("===");
-        System.out.println("Commit " + headpointer.getcurrhead());
-        System.out.println(commit.timestamp());
-        System.out.println(commit.commitmessage());
+        System.out.println("=== ");
+        System.out.println("Commit " + headpointer.getcurrhead() + " ");
+        System.out.println(commit.timestamp() + " ");
+        System.out.println(commit.commitmessage() + " ");
         while (commit.haspreviouscommit()) {
             System.out.println();
             Commit pointer = commit;
             commit = commit.prevobj();
-            System.out.println("===");
-            System.out.println("Commit " + pointer.prev());
-            System.out.println(commit.timestamp());
-            System.out.println(commit.commitmessage());
+            System.out.println("=== ");
+            System.out.println("Commit " + pointer.prev() + " ");
+            System.out.println(commit.timestamp() + " ");
+            System.out.println(commit.commitmessage() + " ");
         }
-//        System.out.println();
+        System.out.println();
     }
 
     /**
@@ -1111,12 +1111,13 @@ public class Main {
     public static void add(String filename) throws IOException {
         File herefile = new File(filename);
         BranchData bd = getBDobject();
+        File gitlet = new File(".gitlet");
         if (bd.contains(filename)) {
+        	storeasfile("BranchData", gitlet, bd);
             return;
         }
         if (herefile.exists()) {
             if (bd.contains(filename)) {
-                File gitlet = new File(".gitlet");
                 File stagingarea = new File(".gitlet", ".staging");
                 File added = new File(stagingarea, filename);
                 added.createNewFile();
