@@ -105,12 +105,13 @@ public class Commit implements Serializable {
     /** Use a commit's TIMESTAMP to return its STRING SHA hashcode. */
     public String shaname() {
     	ArrayList<String> names = new ArrayList<String>();
-    	names.add(_previouscommit);
+    	if (_previouscommit != null) {
+    	names.add(_previouscommit); 
+    	}
     	names.add(_timestamp);
     	names.add(_commitmessage);
     	names.addAll(_blobs.values());
-    	Object[] tohash = names.toArray();
-        return Utils.sha1(tohash);
+        return Utils.sha1(names.toArray());
     }
 
     /** Private date variable which stores the timestamp. */
