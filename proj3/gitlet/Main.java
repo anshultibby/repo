@@ -893,18 +893,18 @@ public class Main {
     private static void log() {
         BranchData headpointer = getBDobject();
         Commit commit = headpointer.getcurrobj();
-        System.out.println("=== ");
-        System.out.println("Commit " + headpointer.getcurrhead() + " ");
-        System.out.println(commit.timestamp() + " ");
-        System.out.println(commit.commitmessage() + " ");
+        System.out.println("===");
+        System.out.println("Commit " + headpointer.getcurrhead());
+        System.out.println(commit.timestamp());
+        System.out.println(commit.commitmessage());
         while (commit.haspreviouscommit()) {
             System.out.println();
             Commit pointer = commit;
             commit = commit.prevobj();
-            System.out.println("=== ");
-            System.out.println("Commit " + pointer.prev() + " ");
-            System.out.println(commit.timestamp() + " ");
-            System.out.println(commit.commitmessage() + " ");
+            System.out.println("===");
+            System.out.println("Commit " + pointer.prev());
+            System.out.println(commit.timestamp());
+            System.out.println(commit.commitmessage());
         }
         System.out.println();
     }
