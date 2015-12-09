@@ -897,10 +897,8 @@ public class Main {
         System.out.println("Commit " + headpointer.getcurrhead());
         System.out.println(commit.timestamp());
         System.out.println(commit.commitmessage());
-        System.out.println("outside the loop");
         while (commit.haspreviouscommit()) {
             System.out.println();
-            System.out.println("inside the loop");
             Commit pointer = commit;
             commit = commit.prevobj();
             System.out.println("===");
