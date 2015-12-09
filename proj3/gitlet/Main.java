@@ -31,13 +31,14 @@ public class Main {
     public static void main(String... args) throws IOException {
         if (args.length == 0) {
             System.err.println("Please enter a command.");
+            System.exit(0);
             return;
         }
         String arg1 = args[0];
         switch (arg1) {
         case "init":
             init(args);
-            break;
+            System.exit(0);
         default:
             notinit(args);
         }
@@ -51,7 +52,7 @@ public class Main {
         File init = new File(".gitlet");
         if (!init.exists()) {
             System.err.println("Not in an initialized gitlet directory.");
-            return;
+            System.exit(0);
         }
         String arg1 = args[0];
         switch (arg1) {
@@ -108,8 +109,9 @@ public class Main {
             break;
         default:
             System.err.println("No command with that name exists.");
-            return;
+            System.exit(0);
         }
+        System.exit(0);
     }
 
     /** Init method with ARGS to shorten code.
