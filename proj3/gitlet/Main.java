@@ -1242,10 +1242,4 @@ public class Main {
             return;
         }
     }
-
-    /**
-     * Private static arraylist of strings which contains the names of all the
-     * files in staging area.
-     */
-    private static ArrayList<String> stagingarea;
 }
