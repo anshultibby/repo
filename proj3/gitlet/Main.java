@@ -558,7 +558,7 @@ public class Main {
      * @throws IOException
      */
     private static void checkout(String... args) throws IOException {
-        if (args.length < 2 || args.length > 4) {
+    	if (args.length < 2 || args.length > 4) {
             System.err.println("Incorrect operands.");
             return;
         } else {
@@ -566,18 +566,18 @@ public class Main {
             if (args[1].equals("--")) {
                 String filename = args[2];
                 checkoutone(filename, branchdata);
-            } else if (args.length > 2 && args[3].equals("--")) {
+            } else if (args.length > 2 && args[2].equals("--")) {
                 String filename = args[3];
                 String commitid = args[1];
                 File commits = new File(".gitlet", ".commits");
                 File commitidf = null;
-                if (commitid.length() != 40) {
-
+                
+                if (commitid.length() < 40) {
                     FilenameFilter filter = new FilenameFilter() {
                         @Override
                         public boolean accept(File dir, String name) {
-                            int lastIndex = commitid.length();
-                            String str = name.substring(lastIndex);
+                        	int lastIndex = commitid.length();
+                            String str = name.substring(40 - lastIndex);
                             if (str.equals(commitid)) {
                                 return true;
                             }
@@ -585,18 +585,22 @@ public class Main {
                         }
                     };
                     File[] allfiles = commits.listFiles(filter);
+                    if (allfiles[0] == null) {
+                    	System.out.println("No commit with that id exists.");
+                    }
                     commitidf = allfiles[0];
                 } else {
                     commitidf = new File(".gitlet/.commits", commitid);
                 }
                 if (commitidf.exists()) {
-                    Commit commitobj = branchdata.getcommitobj(commitid);
+                    Commit commitobj = getcommitobject(commitidf);
                     HashMap<String, String> map = commitobj.getmap();
                     if (map.get(filename) != null) {
                         File repofile = new File(".gitlet", map.get(filename));
                         if (repofile.exists()) {
                             File tobeadded = new File(filename);
                             tobeadded.createNewFile();
+                            
                             Utils.writeContents(tobeadded,
                                     Utils.readContents(repofile));
                         } else {
