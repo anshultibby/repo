@@ -832,11 +832,10 @@ public class Main {
         // System.out.println(untracked);
         // }
         // }
-        System.out.println();
 
     }
 
-    /** Method which performs the find functionality. */
+    /** Method which locates all the commits with a TARGETMESSAGE. */
     private static void find(String targetmessage) {
         boolean noneFound = true;
         File commits = new File(".gitlet", ".commits");
@@ -1058,7 +1057,7 @@ public class Main {
             commitidf = new File(".gitlet/.commits", commitid);
         }
         if (!commitidf.exists()) {
-            System.err.print(" No commit with that id exists.");
+            System.err.print("No commit with that id exists.");
             return;
         }
         BranchData bd = getBDobject();
