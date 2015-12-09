@@ -1111,6 +1111,9 @@ public class Main {
     public static void add(String filename) throws IOException {
         File herefile = new File(filename);
         BranchData bd = getBDobject();
+        if (bd.contains(filename)) {
+            return;
+        }
         if (herefile.exists()) {
             if (bd.contains(filename)) {
                 File gitlet = new File(".gitlet");
