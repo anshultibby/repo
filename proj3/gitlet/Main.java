@@ -489,9 +489,6 @@ public class Main {
                     if (!splithashval.equals(currmapval)
                             && splithashval.equals(givenmapval)) {
                         if (currmapval.equals(null)) {
-                            // Do nothing
-                        } else {
-                            // Do nothing
                         }
                     }
                     if (!splithashval.equals(currmapval)
@@ -578,10 +575,7 @@ public class Main {
                         @Override
                         public boolean accept(File dir, String name) {
                             int lastIndex = commitid.length();
-                            // get extension
                             String str = name.substring(lastIndex);
-
-                            // match path name extension
                             if (str.equals(commitid)) {
                                 return true;
                             }
@@ -613,8 +607,6 @@ public class Main {
                         return;
                     }
 
-                } else {
-                    // commit file doesnt exist
                 }
             } else if (args.length == 2) {
                 String branchname = args[1];
@@ -1008,8 +1000,6 @@ public class Main {
             if (repofile.exists()) {
                 File tobeadded = new File(filename);
                 Utils.writeContents(tobeadded, Utils.readContents(repofile));
-            } else {
-                // throw object that the commit points to doesnt exist error.
             }
         } else {
             System.err.print("File does not exist in that commit.");
