@@ -604,13 +604,13 @@ public class Main {
                             Utils.writeContents(tobeadded,
                                     Utils.readContents(repofile));
                         } else {
-                            System.err.println("No commit "
-                                    + "with that id exists.");
+                            System.err.println("File does not "
+                                    + "exist in that commit.");
                             return;
                         }
                     } else {
-                        System.err.println("File does not "
-                                + "exist in that commit.");
+                        System.err.println("No commit "
+                                + "with that id exists.");
                         return;
                     }
 
