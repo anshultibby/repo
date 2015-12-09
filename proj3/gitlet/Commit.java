@@ -3,6 +3,7 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -102,8 +103,15 @@ public class Commit implements Serializable {
     }
 
     /** Use a commit's TIMESTAMP to return its STRING SHA hashcode. */
-    public String commitname(String timestamp) {
-        return Utils.sha1(timestamp);
+    public String shaname() {
+    	ArrayList<String> names = new ArrayList<String>();
+    	if (_previouscommit != null) {
+    	names.add(_previouscommit); 
+    	}
+    	names.add(_timestamp);
+    	names.add(_commitmessage);
+    	names.addAll(_blobs.values());
+        return Utils.sha1(names.toArray());
     }
 
     /** Private date variable which stores the timestamp. */
