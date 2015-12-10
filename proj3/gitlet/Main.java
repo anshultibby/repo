@@ -396,7 +396,7 @@ public class Main {
         if (!remoterepo.exists()) {
             System.err.println("Remote directory not found.");
         }
-        BranchData remotebd = getremoteBD(remotename);
+        BranchData remotebd = (BranchData) getremoteBD(remotename);
         boolean hashistory = false;
         Commit currhead = bd.getcurrobj();
         if (!remotebd.containsbranch(branchname)) {
@@ -438,13 +438,12 @@ public class Main {
             return;
         }
         File remoterepo = new File(remotepath);
-        BranchData remotebd = getremoteBD(remotepath);
+        BranchData remotebd = (BranchData) getremoteBD(remotepath);
         if (!remotebd.containsbranch(branchname)) {
             System.err.println("That remote does not have that branch.");
             return;
         }
         Commit remoteheadbranch = remotebd.getcommitobj(branchname);
-        System.out.println(remoteheadbranch);
         fetchfiles(remotepath, remoteheadbranch, branchname);
         String branch = new String(remotename + "" + "/" + "" + branchname);
         bd.addbranch(branch, remoteheadbranch.shaname());
@@ -485,7 +484,7 @@ public class Main {
             }
             Commit currcommit = bd.getcurrobj();
             Commit givencommit = bd.getcommitobj(given);
-            if (currcommit.equals(givencommit)) {
+            if (currcommit.shaname().equals(givencommit.shaname())) {
                 System.err.println("Given branch is an"
                         + " ancestor of the current branch.");
                 return;
@@ -493,7 +492,7 @@ public class Main {
             Commit prevofcurrent = currcommit;
             while (prevofcurrent.prev() != null) {
                 prevofcurrent = prevofcurrent.prevobj();
-                if (givencommit.equals(prevofcurrent)) {
+                if (givencommit.shaname().equals(prevofcurrent.shaname())) {
                     System.err.println("Given branch is an"
                             + " ancestor of the current branch.");
                     return;
@@ -502,7 +501,7 @@ public class Main {
             Commit prevofgiven = givencommit;
             while (prevofgiven.prev() != null) {
                 prevofgiven = prevofgiven.prevobj();
-                if (currcommit.equals(prevofgiven)) {
+                if (currcommit.shaname().equals(prevofgiven.shaname())) {
                     bd.setcurrhead(givencommit.shaname());
                     System.err.println("Current branch fast-forwarded.");
                     return;
@@ -538,6 +537,7 @@ public class Main {
                 String givenmapval = givenmap.get(splitkey);
                 String currmapval = currmap.get(splitkey);
                 if (splithashval == null) {
+
                 	if (givenmapval == null) {
                 		continue;
                 	}
@@ -547,8 +547,14 @@ public class Main {
                             continue;
                         }
                 	}
-                	
+                	if (!currmapval.equals(givenmapval)){
+                		conflicts = true;
+                        mergefiles(currmapval, givenmapval, splitkey);
+                        continue;
+                	}
+                	continue;
                 }
+
                 if (splithashval.equals(currmapval) && (!splithashval.equals(givenmapval))) {
                     if (givenmapval == null) {
                         remove(splitkey);
@@ -891,7 +897,6 @@ public class Main {
             Commit headcommit, String branchname) throws IOException {
         File gitlet = new File(pathname);
         File commits = new File(gitlet, ".commits");
-        System.out.println(headcommit);
         storeasfile(headcommit.shaname(), commits, headcommit);
         HashMap<String, String> commitmap = headcommit.getmap();
         for (String file : commitmap.keySet()) {
@@ -1206,19 +1211,22 @@ public class Main {
         return obj;
     }
 
-    /** Method which returns the BRANCHDATA object from a remote REPO branch. */
+    /** Method which returns the BRANCHDATA object from a remote REPO branch. 
+     * @throws IOException*/
     private static BranchData getremoteBD(String repo) {
-        File repof = new File(repo);
-        File file = new File(repof, "BranchData");
+        File file = new File(repo, "BranchData");
+        
         BranchData obj;
         try {
             ObjectInputStream inp =
                     new ObjectInputStream(new FileInputStream(file));
             obj = (BranchData) inp.readObject();
             inp.close();
+
         } catch (IOException | ClassNotFoundException excp) {
             obj = null;
         }
+        
         return obj;
     }
 
