@@ -104,13 +104,13 @@ public class Commit implements Serializable {
 
     /** Use a commit's TIMESTAMP to return its STRING SHA hashcode. */
     public String shaname() {
-    	ArrayList<String> names = new ArrayList<String>();
-    	if (_previouscommit != null) {
-    	names.add(_previouscommit); 
-    	}
-    	names.add(_timestamp);
-    	names.add(_commitmessage);
-    	names.addAll(_blobs.values());
+        ArrayList<String> names = new ArrayList<String>();
+        if (_previouscommit != null) {
+            names.add(_previouscommit);
+        }
+        names.add(_timestamp);
+        names.add(_commitmessage);
+        names.addAll(_blobs.values());
         return Utils.sha1(names.toArray());
     }
 
@@ -118,8 +118,9 @@ public class Commit implements Serializable {
     private String _timestamp;
     /** Private string variable which contains the commit message. */
     private String _commitmessage;
-    /** Data structure that keeps track of file
-     * names and their SHA1 hashcodes.*/
+    /**
+     * Data structure that keeps track of file names and their SHA1 hashcodes.
+     */
     private HashMap<String, String> _blobs;
     /** A String which stores a reference to the previous commit. */
     private String _previouscommit;
