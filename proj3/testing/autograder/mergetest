@@ -1,0 +1,36 @@
+# Test Merge
+> init
+<<<
+D DATE "\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d"
+D COMMIT_HEAD "Commit ([a-f0-9]+)[ \t]*\n${DATE}"
+D COMMIT_LOG "(===[ ]*\nCommit [a-f0-9]+[ ]*\n${DATE}[ ]*\n(?:.|\n)*?(?=\Z|\n===))"
+D ARBLINE "[^\n]*(?=\n|\Z)"
+D ARBLINES "(?:(?:.|\n)*(?:\n|\Z)|\A|\Z)"
++ f.txt f.txt
++ g.txt g.txt
+> add g.txt
+<<<
+> add f.txt
+<<<
+> commit "Two files"
+<<<
+> branch other
+<<<
++ h.txt h.txt
+> add h.txt
+<<<
+> rm g.txt
+<<<
+> commit "Add h.txt and remove g.txt"
+<<<
+> checkout other
+<<<
+> rm f.txt
+<<<
++ k.txt k.txt
+> add k.txt
+<<<
+> commit "Add k.txt and remove f.txt"
+<<<
+> checkout master
+<<<
