@@ -536,8 +536,7 @@ public class Main {
                     	continue;
                     }
                 }
-                if (!splithashval.equals(currmapval) && !splithashval.equals(givenmapval)
-                        && !givenmapval.equals(currmapval)) {
+                if (!splithashval.equals(currmapval) && !splithashval.equals(givenmapval)) {
                     conflicts = true;
                     mergefiles(currmapval, givenmapval, splitkey);
                     continue;
