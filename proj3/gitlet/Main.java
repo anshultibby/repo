@@ -478,10 +478,12 @@ public class Main {
         merge(branchname);
     }
 
-    /** Check staging FILES and print error if there are
+    /** Check staging FILES and returns TRUE if there are
      * uncommitted changes.*/
-    private static boolean checkStagingFile(File[] files) {
-        if (files.length != 0) {
+    private static boolean checkStagingFile() {
+        File staging = new File(".gitlet", ".staging");
+        File[] stagingis = staging.listFiles();
+        if (stagingis.length != 0) {
             System.err.println("You have uncommitted changes.");
             return true;
         }
@@ -499,10 +501,8 @@ public class Main {
 
     /** Method which performs a merge using a GIVEN branch.*/
     private static void merge(String given) throws IOException {
-        File staging = new File(".gitlet", ".staging");
-        File[] stagingis = staging.listFiles();
-        if (checkStagingFile(stagingis)) {
-            return;	
+        if (checkStagingFile()) {
+            return;
         }
         BranchData bd = getBDobject();
         if (bd.containsbranch(given)) {
