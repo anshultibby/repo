@@ -480,11 +480,12 @@ public class Main {
 
     /** Check staging FILES and print error if there are
      * uncommitted changes.*/
-    private static void checkStagingFile(File[] files) {
+    private static boolean checkStagingFile(File[] files) {
         if (files.length != 0) {
             System.err.println("You have uncommitted changes.");
-            return;
+            return true;
         }
+        return false;
     }
 
     /** Stub method to print an ancestor of the current branch
@@ -500,7 +501,9 @@ public class Main {
     private static void merge(String given) throws IOException {
         File staging = new File(".gitlet", ".staging");
         File[] stagingis = staging.listFiles();
-        checkStagingFile(stagingis);
+        if (checkStagingFile(stagingis)) {
+            return;	
+        }
         BranchData bd = getBDobject();
         if (bd.containsbranch(given)) {
             if (bd.iscurrent(given)) {
