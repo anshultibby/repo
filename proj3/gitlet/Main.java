@@ -50,11 +50,7 @@ public class Main {
      * @throws IOException
      */
     private static void notinit(String... args) throws IOException {
-        File init = new File(".gitlet");
-        if (!init.exists()) {
-            System.err.println("Not in an initialized gitlet directory.");
-            System.exit(0);
-        }
+        initExisting();
         String arg1 = args[0];
         switch (arg1) {
         case "add":
@@ -109,10 +105,28 @@ public class Main {
             fetch(args);
             break;
         default:
-            System.err.println("No command with that name exists.");
-            System.exit(0);
+            defaultTo();
         }
         System.exit(0);
+    }
+
+    /** Stub Method to shorten method lines. The default case if
+     * no command if found.
+     */
+    public static void defaultTo() {
+        System.err.println("No command with that name exists.");
+        System.exit(0);
+    }
+
+    /** Stub Method to shorten method lines. Check if .gitlet directory
+     * already exists.
+     */
+    private static void initExisting() {
+        File init = new File(".gitlet");
+        if (!init.exists()) {
+            System.err.println("Not in an initialized gitlet directory.");
+            System.exit(0);
+        }
     }
 
     /**
@@ -396,7 +410,8 @@ public class Main {
         if (!remoterepo.exists()) {
             System.err.println("Remote directory not found.");
         }
-        BranchData remotebd = (BranchData) getremoteBD(remotename);
+        File repo = new File(remotepath);
+        BranchData remotebd = (BranchData) getremoteBD(repo);
         boolean hashistory = false;
         Commit currhead = bd.getcurrobj();
         if (!remotebd.containsbranch(branchname)) {
@@ -438,7 +453,7 @@ public class Main {
             return;
         }
         File remoterepo = new File(remotepath);
-        BranchData remotebd = (BranchData) getremoteBD(remotepath);
+        BranchData remotebd = (BranchData) getremoteBD(remoterepo);
         System.out.println(remotepath);
         if (!remotebd.containsbranch(branchname)) {
             System.err.println("That remote does not have that branch.");
@@ -476,7 +491,6 @@ public class Main {
             System.err.println("You have uncommitted changes.");
             return;
         }
-
         BranchData bd = getBDobject();
         if (bd.containsbranch(given)) {
             if (bd.iscurrent(given)) {
@@ -523,12 +537,11 @@ public class Main {
             if (!skip) {
                 splitmap = splitpoint.getmap();
                 looper.addAll(splitmap.keySet());
-
             }
             File wdir = new File(".");
             for (String f : Utils.plainFilenamesIn(wdir)) {
                 if (givenmap.containsKey(f) && (!currmap.containsKey(f))) {
-                    System.out.println("There is an untracked "
+                    System.err.println("There is an untracked "
                             + "file in the way; delete it or add it first.");
                     return;
                 }
@@ -538,25 +551,26 @@ public class Main {
                 String givenmapval = givenmap.get(splitkey);
                 String currmapval = currmap.get(splitkey);
                 if (splithashval == null) {
-                	if (givenmapval == null) {
-                		continue;
-                	}
-                	if (currmapval == null) {
-                		if (checkoutcommit(splitkey, givencommit.shaname(), bd, false)) {
+                    if (givenmapval == null) {
+                        continue;
+                    }
+                    if (currmapval == null) {
+                        if (checkoutcommit(splitkey,
+                                givencommit.shaname(), bd, false)) {
                             add(splitkey);
                             continue;
                         }
-                	}
-                	if (!currmapval.equals(givenmapval)){
-                		conflicts = true;
+                    }
+                    if (!currmapval.equals(givenmapval)) {
+                        conflicts = true;
                         mergefiles(currmapval, givenmapval, splitkey);
                         continue;
-                	}
-                	continue;
+                    }
+                    continue;
                 }
 
-                if (splithashval.equals(currmapval) && (!splithashval.equals(givenmapval))) {
-
+                if (splithashval.equals(currmapval)
+                        && (!splithashval.equals(givenmapval))) {
                     if (givenmapval == null) {
                         remove(splitkey);
                     } else {
@@ -647,11 +661,7 @@ public class Main {
                     for (String key : branchmap.keySet()) {
                         File addfile = new File(key);
                         if (addfile.exists() && !currmap.containsKey(key)) {
-                            System.err.println(
-                                    "There is an "
-                                            + "untracked file in the way; "
-                                            + "delete it or add it first.");
-                            return;
+                            untrackedMessage();
                         }
                         addfile.delete();
                         addfile.createNewFile();
@@ -666,9 +676,7 @@ public class Main {
                             rmfile.delete();
                         }
                     }
-                    File staging = new File(".gitlet", ".staging");
-                    staging.delete();
-                    staging.mkdir();
+                    remakeStaging();
                     branchdata.setcurrent(branchname);
                     File gitlet = new File(".gitlet");
                     storeasfile("BranchData", gitlet, branchdata);
@@ -680,6 +688,24 @@ public class Main {
             }
         }
         System.err.println("Incorrect operands.");
+        return;
+    }
+
+    /** Stub method which remakes the staging area. */
+    private static void remakeStaging() {
+        File staging = new File(".gitlet", ".staging");
+        staging.delete();
+        staging.mkdir();
+    }
+
+    /** Stub method to display a message when the user
+     * checks out a branch but has untracked files.
+     */
+    private static void untrackedMessage() {
+        System.err.println(
+                "There is an "
+                        + "untracked file in the way; "
+                        + "delete it or add it first.");
         return;
     }
 
@@ -1106,9 +1132,7 @@ public class Main {
         for (File file : fileshere) {
             String name = file.getName();
             if (!currmap.containsKey(name) && argmap.containsKey(name)) {
-                System.err.println("There is an untracked "
-                        + "file in the way; delete it or add it first.");
-                return;
+                untrackedMessage();
             }
         }
         for (String key : currmap.keySet()) {
@@ -1125,14 +1149,19 @@ public class Main {
             File branchfile = new File(".gitlet", argmap.get(key));
             Utils.writeContents(addfile, Utils.readContents(branchfile));
         }
+        deleteStaging();
+        bd.setcurrhead(commitidf.getName());
+        File gitlet = new File(".gitlet");
+        storeasfile("BranchData", gitlet, bd);
+    }
+
+    /** Stub method which deletes the files in the staging area. */
+    public static void deleteStaging() {
         File staging = new File(".gitlet", ".staging");
         File[] tobestaged = staging.listFiles();
         for (File file : tobestaged) {
             file.delete();
         }
-        bd.setcurrhead(commitidf.getName());
-        File gitlet = new File(".gitlet");
-        storeasfile("BranchData", gitlet, bd);
     }
 
     /**
@@ -1211,13 +1240,14 @@ public class Main {
         return obj;
     }
 
-    /** Method which returns the BRANCHDATA object from a remote REPO branch. 
+    /** Method which returns the BRANCHDATA object from a remote REPO branch.
      * @throws IOException*/
-    private static BranchData getremoteBD(String repo) {
-        File file = new File(repo);
-        File read = new File(file, "BranchData");
+    private static BranchData getremoteBD(File repo) {
+        File file = new File(repo, "BranchData");
         File file2 = new File(".gitlet", "remoteinfo");
-        Utils.writeContents(file2, Utils.readContents(read));
+        file2.canRead();
+        file2.setReadable(true);
+        Utils.writeContents(file2, Utils.readContents(file));
         BranchData obj;
         try {
             ObjectInputStream inp =

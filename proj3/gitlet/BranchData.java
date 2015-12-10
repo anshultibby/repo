@@ -137,12 +137,12 @@ public class BranchData implements Serializable {
         Commit commitobj = Main.getcommitobject(commitf);
         return commitobj;
     }
-    /** Returns the remote COMMIT which the particular BRANCH head pointer is
-     * at.
+    /** Returns the remote COMMIT on a path with PATHNAME
+     * where the particular BRANCH head pointer is at.
      */
     public Commit getcommitobj(String pathname, String branch) {
         String commit = _branches.get(branch);
-        File commitf = new File(pathname + ""+ "/.commits", commit);
+        File commitf = new File(pathname + "" + "/.commits", commit);
         Commit commitobj = Main.getcommitobject(commitf);
         return commitobj;
     }
