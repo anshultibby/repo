@@ -532,7 +532,8 @@ public class Main {
                 if (givenmap.get(key) == null) {
                     // do nothing
                 }
-                if (splitmap.get(key) == null || splitpoint == null) {
+                if ((splitmap.get(key) == null || splitpoint == null) 
+                		&& (!givenmap.get(key).equals(currmap.get(key)))) {
                     conflicts = true;
                     mergefiles(currmap.get(key), givenmap.get(key), key);
                 }
