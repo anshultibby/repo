@@ -591,6 +591,7 @@ public class Main {
                 String filename = args[3];
                 String commitid = args[1];
                 checkoutcommit(filename, commitid, branchdata, true);
+                return;
                 
             } else if (args.length == 2) {
                 String branchname = args[1];
