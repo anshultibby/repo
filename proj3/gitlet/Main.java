@@ -1035,7 +1035,6 @@ public class Main {
                 File tobeadded = new File(filename);
                 tobeadded.createNewFile();
                 Utils.writeContents(tobeadded, Utils.readContents(repofile));
-                System.out.println("fuck");
             }
         } else {
         	if (print) {
