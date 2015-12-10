@@ -91,7 +91,7 @@ public class Commit implements Serializable {
 
     /** Returns a COMMIT given the previous REMOTE name. */
     public Commit prevremoteobj(String remote) {
-        File remotef = new File(remote, ".gitlet/.commits");
+        File remotef = new File(remote, ".commits");
         File prev = new File(remotef, _previouscommit);
         Commit prevobj = Main.getcommitobject(prev);
         return prevobj;

@@ -681,6 +681,7 @@ public class Main {
                         File addfile = new File(key);
                         if (addfile.exists() && !currmap.containsKey(key)) {
                             untrackedMessage();
+                            return;
                         }
                         addfile.delete();
                         addfile.createNewFile();
@@ -942,23 +943,26 @@ public class Main {
             Commit headcommit, String branchname) throws IOException {
         File gitlet = new File(pathname);
         File commits = new File(gitlet, ".commits");
-        storeasfile(headcommit.shaname(), commits, headcommit);
+        File mygitlet = new File(".gitlet", ".commits");
+        storeasfile(headcommit.shaname(), mygitlet, headcommit);
         HashMap<String, String> commitmap = headcommit.getmap();
         for (String file : commitmap.keySet()) {
-            File fileR = new File(pathname, file);
+            File fileR = new File(pathname, commitmap.get(file));
             File store = new File(".gitlet", commitmap.get(file));
+            store.createNewFile();
             Utils.writeContents(store, Utils.readContents(fileR));
         }
         while (headcommit.haspreviouscommit()) {
-            Commit prevcommit = headcommit.prevremoteobj(pathname);
-            String prev = prevcommit.shaname();
-            HashMap<String, String> commitmap2 = prevcommit.getmap();
+            headcommit = headcommit.prevremoteobj(pathname);
+            String prev = headcommit.shaname();
+            HashMap<String, String> commitmap2 = headcommit.getmap();
             for (String file : commitmap2.keySet()) {
-                File fileR = new File(pathname, file);
+                File fileR = new File(pathname, commitmap.get(file));
                 File store = new File(".gitlet", commitmap.get(file));
+                store.createNewFile();
                 Utils.writeContents(store, Utils.readContents(fileR));
             }
-            storeasfile(prev, commits, headcommit);
+            storeasfile(prev, mygitlet, headcommit);
         }
     }
 
