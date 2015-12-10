@@ -479,12 +479,9 @@ public class Main {
         merge(branchname);
     }
 
-    /**
-     * Method which performs a merge using a GIVEN branch.
-     *
-     * @throws IOException
-     */
-    private static void merge(String given) throws IOException {
+    /** Method which performs a merge using a GIVEN branch.
+     * @throws IOException. */
+     private static void merge(String given) throws IOException {
         File staging = new File(".gitlet", ".staging");
         File[] stagingis = staging.listFiles();
         if (stagingis.length != 0) {
@@ -533,7 +530,6 @@ public class Main {
             Set<String> looper = new HashSet<String>();
             looper.addAll(currmap.keySet());
             looper.addAll(givenmap.keySet());
-            boolean conflicts = false;
             if (!skip) {
                 splitmap = splitpoint.getmap();
                 looper.addAll(splitmap.keySet());
@@ -546,63 +542,71 @@ public class Main {
                     return;
                 }
             }
-            for (String splitkey : looper) {
-                String splithashval = splitmap.get(splitkey);
-                String givenmapval = givenmap.get(splitkey);
-                String currmapval = currmap.get(splitkey);
-                if (splithashval == null) {
-                    if (givenmapval == null) {
-                        continue;
-                    }
-                    if (currmapval == null) {
-                        if (checkoutcommit(splitkey,
-                                givencommit.shaname(), bd, false)) {
-                            add(splitkey);
-                            continue;
-                        }
-                    }
-                    if (!currmapval.equals(givenmapval)) {
-                        conflicts = true;
-                        mergefiles(currmapval, givenmapval, splitkey);
-                        continue;
-                    }
-                    continue;
-                }
-
-                if (splithashval.equals(currmapval)
-                        && (!splithashval.equals(givenmapval))) {
-                    if (givenmapval == null) {
-                        remove(splitkey);
-                    } else {
-                        if (checkoutcommit(givenmapval,
-                                givencommit.shaname(), bd, false)) {
-                            add(splitkey);
-                        }
-                    }
-                    continue;
-                }
-                if (!splithashval.equals(currmapval)
-                        && splithashval.equals(givenmapval)) {
-                    if (currmapval == null) {
-                        continue;
-                    }
-                }
-                conflicts = true;
-                mergefiles(currmapval, givenmapval, splitkey);
-                continue;
-            }
-            if (conflicts) {
-                System.err.println("Encountered a merge conflict.");
-                return;
-            } else {
-                String message = new
-                        String("Merged " + bd.getcurrent()
-                        + " with " + given + ".");
-                commit(message);
-                return;
-            }
+            submerge(looper, splitmap, givenmap, currmap, bd, givencommit, given);
+            
         } else {
             System.err.println(" A branch with that name does not exist.");
+        }
+    }
+    /** Merge submethod to perform operations. 
+     * @throws IOException */
+    private static void submerge(Set<String> looper, HashMap<String, String> splitmap, HashMap<String, String> givenmap, 
+    		HashMap<String, String> currmap, BranchData bd, Commit givencommit, String given) throws IOException {
+    	boolean conflicts = false;
+    	for (String splitkey : looper) {
+            String splithashval = splitmap.get(splitkey);
+            String givenmapval = givenmap.get(splitkey);
+            String currmapval = currmap.get(splitkey);
+            if (splithashval == null) {
+                if (givenmapval == null) {
+                    continue;
+                }
+                if (currmapval == null) {
+                    if (checkoutcommit(splitkey,
+                            givencommit.shaname(), bd, false)) {
+                        add(splitkey);
+                        continue;
+                    }
+                }
+                if (!currmapval.equals(givenmapval)) {
+                    conflicts = true;
+                    mergefiles(currmapval, givenmapval, splitkey);
+                    continue;
+                }
+                continue;
+            }
+
+            if (splithashval.equals(currmapval)
+                    && (!splithashval.equals(givenmapval))) {
+                if (givenmapval == null) {
+                    remove(splitkey);
+                } else {
+                    if (checkoutcommit(givenmapval,
+                            givencommit.shaname(), bd, false)) {
+                        add(splitkey);
+                    }
+                }
+                continue;
+            }
+            if (!splithashval.equals(currmapval)
+                    && splithashval.equals(givenmapval)) {
+                if (currmapval == null) {
+                    continue;
+                }
+            }
+            conflicts = true;
+            mergefiles(currmapval, givenmapval, splitkey);
+            continue;
+        }
+        if (conflicts) {
+            System.err.println("Encountered a merge conflict.");
+            return;
+        } else {
+            String message = new
+                    String("Merged " + bd.getcurrent()
+                    + " with " + given + ".");
+            commit(message);
+            return;
         }
     }
 
