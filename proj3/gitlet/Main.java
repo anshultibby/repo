@@ -591,7 +591,7 @@ public class Main {
                 String filename = args[3];
                 String commitid = args[1];
                 checkoutcommit(filename, commitid, branchdata, true);
-                
+                return;
             } else if (args.length == 2) {
                 String branchname = args[1];
                 if (branchdata.iscurrent(branchname)) {
@@ -1035,7 +1035,6 @@ public class Main {
                 File tobeadded = new File(filename);
                 tobeadded.createNewFile();
                 Utils.writeContents(tobeadded, Utils.readContents(repofile));
-                System.out.println("fuck");
             }
         } else {
         	if (print) {
