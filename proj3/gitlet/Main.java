@@ -20,12 +20,14 @@ import java.util.Set;
 
 /**
  * Driver class for Gitlet, the tiny stupid version-control system.
+ * 
  * @author Anshul Tibrewal and Michael Wang
  */
 public class Main {
     /**
      * Usage: java gitlet.Main ARGS, where ARGS contains
      * <COMMAND> <OPERAND> ....
+     * 
      * @throws IOException
      */
     public static void main(String... args) throws IOException {
@@ -46,6 +48,7 @@ public class Main {
 
     /**
      * Not-init method which handles the switchcase of the non-init ARGS.
+     * 
      * @throws IOException
      */
     private static void notinit(String... args) throws IOException {
@@ -114,7 +117,8 @@ public class Main {
         System.exit(0);
     }
 
-    /** Init method with ARGS to shorten code.
+    /**
+     * Init method with ARGS to shorten code.
      * @throws IOException
      */
     private static void init(String... args) throws IOException {
@@ -135,7 +139,8 @@ public class Main {
         add(filename);
     }
 
-    /** Commit method with ARGS to shorten code.
+    /**
+     * Commit method with ARGS to shorten code.
      * @throws IOException
      */
     private static void commit(String... args) throws IOException {
@@ -147,7 +152,8 @@ public class Main {
         commit(commitmessage);
     }
 
-    /** Remove method with ARGS to shorten code.
+    /**
+     * Remove method with ARGS to shorten code.
      * @throws IOException
      */
     private static void rm(String... args) throws IOException {
@@ -159,7 +165,8 @@ public class Main {
         remove(filename2);
     }
 
-    /** Log method with ARGS to shorten code.
+    /**
+     * Log method with ARGS to shorten code.
      * @throws IOException
      */
     private static void log(String... args) throws IOException {
@@ -170,7 +177,8 @@ public class Main {
         log();
     }
 
-    /** Global-log method with ARGS to shorten code.
+    /**
+     * Global-log method with ARGS to shorten code.
      * @throws IOException
      */
     private static void globallog(String... args) throws IOException {
@@ -194,7 +202,8 @@ public class Main {
         find(targetmessage);
     }
 
-    /** Status method with ARGS to shorten code.
+    /**
+     * Status method with ARGS to shorten code.
      * @throws IOException
      */
     private static void status(String... args) throws IOException {
@@ -205,7 +214,8 @@ public class Main {
         status();
     }
 
-    /** Branch method with ARGS to shorten code.
+    /**
+     * Branch method with ARGS to shorten code.
      * @throws IOException
      */
     private static void branch(String... args) throws IOException {
@@ -217,7 +227,8 @@ public class Main {
         branch(branchname);
     }
 
-    /** rmBranch method with ARGS to shorten code.
+    /**
+     * rmBranch method with ARGS to shorten code.
      * @throws IOException
      */
     private static void rmbranch(String... args) throws IOException {
@@ -229,7 +240,8 @@ public class Main {
         rmbranch(branchname2);
     }
 
-    /** Reset method with ARGS to shorten code.
+    /**
+     * Reset method with ARGS to shorten code.
      * @throws IOException
      */
     private static void reset(String... args) throws IOException {
@@ -241,7 +253,8 @@ public class Main {
         reset(commitid);
     }
 
-    /** Merge method with ARGS to shorten code.
+    /**
+     * Merge method with ARGS to shorten code.
      * @throws IOException
      */
     private static void merge(String... args) throws IOException {
@@ -253,7 +266,8 @@ public class Main {
         merge(branchname3);
     }
 
-    /** Add_remote method with ARGS to shorten code.
+    /**
+     * Add_remote method with ARGS to shorten code.
      * @throws IOException
      */
     private static void addremote(String... args) throws IOException {
@@ -266,7 +280,8 @@ public class Main {
         addremote(remotename, remotepath);
     }
 
-    /** rm_remote method with ARGS to shorten code.
+    /**
+     * rm_remote method with ARGS to shorten code.
      * @throws IOException
      */
     private static void rmremote(String... args) throws IOException {
@@ -278,7 +293,8 @@ public class Main {
         rmremote(remotename);
     }
 
-    /** Push method with ARGS to shorten code.
+    /**
+     * Push method with ARGS to shorten code.
      * @throws IOException
      */
     private static void push(String... args) throws IOException {
@@ -291,7 +307,8 @@ public class Main {
         push(remotename, remotepath);
     }
 
-    /** Pull method with ARGS to shorten code.
+    /**
+     * Pull method with ARGS to shorten code.
      * @throws IOException
      */
     private static void pull(String... args) throws IOException {
@@ -304,7 +321,9 @@ public class Main {
         pull(remotename, remotepath);
     }
 
-    /** Fetch method with ARGS to shorten code.
+    /**
+     * Fetch method with ARGS to shorten code.
+     * 
      * @throws IOException
      */
     private static void fetch(String... args) throws IOException {
@@ -317,12 +336,12 @@ public class Main {
         fetch(remotename, remotepath);
     }
 
-    /** Add_remote method which takes a NAME and PATH to
-     * perform the add-remote functionality.
+    /**
+     * Add_remote method which takes a NAME and PATH to perform the add-remote
+     * functionality.
      * @throws IOException
      */
-    private static void addremote(String name, String path)
-            throws IOException {
+    private static void addremote(String name, String path) throws IOException {
         BranchData bd = getBDobject();
         if (bd.hasremote(name)) {
             System.err.println(" A remote with that name already exists.");
@@ -333,8 +352,8 @@ public class Main {
         storeasfile("BranchData", gitlet, bd);
     }
 
-    /** Method which takes a path NAME to
-     * perform the rm-remote functionality.
+    /**
+     * Method which takes a path NAME to perform the rm-remote functionality.
      * @throws IOException
      */
     private static void rmremote(String name) throws IOException {
@@ -348,12 +367,12 @@ public class Main {
         storeasfile("BranchData", gitlet, bd);
     }
 
-    /** Method which performs the push functionality given a REMOTENAME
-     * and a BRANCHNAME.
+    /**
+     * Method which performs the push functionality given a REMOTENAME and a
+     * BRANCHNAME.
      * @throws IOException
      */
-    private static void push(String remotename,
-            String branchname) throws IOException {
+    private static void push(String remotename, String branchname) throws IOException {
         BranchData bd = getBDobject();
         String remotepath = bd.getremotepath(remotename);
         File remoterepo = new File(remotepath, ".gitlet");
@@ -380,20 +399,18 @@ public class Main {
             }
         }
         if (hashistory) {
-            writecommits(remotename, currhead,
-                    loophead.shaname());
+            writecommits(remotename, currhead, loophead.shaname());
         } else {
-            System.err.println("Please pull down"
-                    + " remote changes before pushing.");
+            System.err.println("Please pull down" + " remote changes before pushing.");
         }
     }
 
-    /** Method which performs the fetch functionality using a
-     * REMOTENAME and a BRANCHNAME.
+    /**
+     * Method which performs the fetch functionality using a REMOTENAME and a
+     * BRANCHNAME.
      * @throws IOException
      */
-    private static void fetch(String remotename,
-            String branchname) throws IOException {
+    private static void fetch(String remotename, String branchname) throws IOException {
         BranchData bd = getBDobject();
         String remotepath = bd.getremotepath(remotename);
         File remoterepo = new File(remotepath, ".gitlet");
@@ -413,12 +430,12 @@ public class Main {
         storeasfile("BranchData", gitlet, bd);
     }
 
-    /** Method which performs the pull functionality given a PATHNAME
-     * and a BRANCHNAME.
+    /**
+     * Method which performs the pull functionality given a PATHNAME and a
+     * BRANCHNAME.
      * @throws IOException
      */
-    private static void pull(String pathname,
-            String branchname) throws IOException {
+    private static void pull(String pathname, String branchname) throws IOException {
         fetch(pathname, branchname);
         merge(branchname);
     }
@@ -443,15 +460,13 @@ public class Main {
             Commit currcommit = bd.getcurrobj();
             Commit givencommit = bd.getcommitobj(given);
             if (currcommit.equals(givencommit)) {
-                System.err.println("Given branch is an"
-                        + " ancestor of the current branch.");
+                System.err.println("Given branch is an" + " ancestor of the current branch.");
             }
             Commit prevofcurrent = currcommit;
             while (prevofcurrent.prev() != null) {
                 prevofcurrent = prevofcurrent.prevobj();
                 if (givencommit.equals(prevofcurrent)) {
-                    System.err.println("Given branch is an"
-                            + " ancestor of the current branch.");
+                    System.err.println("Given branch is an" + " ancestor of the current branch.");
                     return;
                 }
             }
@@ -479,8 +494,7 @@ public class Main {
                     String splithashval = splitmap.get(splitkey);
                     String givenmapval = givenmap.get(splitkey);
                     String currmapval = currmap.get(splitkey);
-                    if (splithashval.equals(currmapval)
-                            && !splithashval.equals(givenmapval)) {
+                    if (splithashval.equals(currmapval) && !splithashval.equals(givenmapval)) {
                         if (givenmapval.equals(null)) {
                             remove(splithashval);
                         } else {
@@ -488,13 +502,11 @@ public class Main {
                             add(splitkey);
                         }
                     }
-                    if (!splithashval.equals(currmapval)
-                            && splithashval.equals(givenmapval)) {
+                    if (!splithashval.equals(currmapval) && splithashval.equals(givenmapval)) {
                         if (currmapval.equals(null)) {
                         }
                     }
-                    if (!splithashval.equals(currmapval)
-                            && !splithashval.equals(givenmapval)
+                    if (!splithashval.equals(currmapval) && !splithashval.equals(givenmapval)
                             && !givenmapval.equals(currmapval)) {
                         conflicts = true;
                         mergefiles(currmapval, givenmapval, splitkey);
@@ -523,8 +535,7 @@ public class Main {
             if (conflicts) {
                 System.err.println("Encountered a merge conflict.");
             } else {
-                String message = new String("Merged "
-                        + bd.getcurrent() + " with" + given);
+                String message = new String("Merged " + bd.getcurrent() + " with" + given);
                 commit(message);
             }
         } else {
@@ -532,8 +543,9 @@ public class Main {
         }
     }
 
-    /** Method which takes a CURRENT and GIVEN commits at the head of
-     * two branches and then returns the COMMIT at which they split.
+    /**
+     * Method which takes a CURRENT and GIVEN commits at the head of two
+     * branches and then returns the COMMIT at which they split.
      */
     private static Commit findsplit(Commit current, Commit given) {
         Commit prevofcurrent = current;
@@ -572,13 +584,12 @@ public class Main {
                 String commitid = args[1];
                 File commits = new File(".gitlet", ".commits");
                 File commitidf = null;
-
                 if (commitid.length() < 40) {
                     FilenameFilter filter = new FilenameFilter() {
                         @Override
                         public boolean accept(File dir, String name) {
                             int lastIndex = commitid.length();
-                            String str = name.substring(40 - lastIndex);
+                            String str = name.substring(0, lastIndex);
                             if (str.equals(commitid)) {
                                 return true;
                             }
@@ -586,8 +597,9 @@ public class Main {
                         }
                     };
                     File[] allfiles = commits.listFiles(filter);
-                    if (allfiles[0] == null) {
+                    if (allfiles.length == 0) {
                         System.out.println("No commit with that id exists.");
+                        return;
                     }
                     commitidf = allfiles[0];
                 } else {
@@ -602,649 +614,633 @@ public class Main {
                             File tobeadded = new File(filename);
                             tobeadded.createNewFile();
 
-                            Utils.writeContents(tobeadded,
-                                    Utils.readContents(repofile));
+                            Utils.writeContents(tobeadded, Utils.readContents(repofile));
+                            return;
                         }
                     } else {
-                        System.err.println("File does not "
-                                + "exist in that commit.");
+                        System.err.println("File does not " + "exist in that commit.");
                         return;
                     }
                 } else {
-                    System.err.println("No commit "
-                            + "with that id exists.");
+                    System.err.println("No commit " + "with that id exists.");
                     return;
                 }
-        } else if (args.length == 2) {
-            String branchname = args[1];
-            if (branchdata.iscurrent(branchname)) {
-                System.err.println("No need to checkout the "
-                        + "current branch.");
-                return;
-            }
-            if (branchdata.containsbranch(branchname)) {
-                Commit branchcommit = branchdata.getcommitobj(branchname);
-                Commit currcommit = branchdata.getcurrobj();
-                HashMap<String, String> currmap = currcommit.getmap();
-                HashMap<String, String> branchmap = branchcommit.getmap();
-                for (String key : branchmap.keySet()) {
-                    File addfile = new File(key);
-                    if (addfile.exists() && !currmap.containsKey(key)) {
-                        System.err.println("There is an "
-                                + "untracked file in the way; "
-                                + "delete it or add it first.");
-                        return;
-                    }
-                    addfile.delete();
-                    addfile.createNewFile();
-                    File branchfile =
-                            new File(".gitlet", branchmap.get(key));
-                    Utils.writeContents(addfile,
-                            Utils.readContents(branchfile));
+            } else if (args.length == 2) {
+                String branchname = args[1];
+                if (branchdata.iscurrent(branchname)) {
+                    System.err.println("No need to checkout the " + "current branch.");
+                    return;
                 }
-                for (String key : currmap.keySet()) {
-                    if (!branchmap.containsKey(key)) {
-                        File rmfile = new File(key);
-                        rmfile.delete();
+                if (branchdata.containsbranch(branchname)) {
+                    Commit branchcommit = branchdata.getcommitobj(branchname);
+                    Commit currcommit = branchdata.getcurrobj();
+                    HashMap<String, String> currmap = currcommit.getmap();
+                    HashMap<String, String> branchmap = branchcommit.getmap();
+                    for (String key : branchmap.keySet()) {
+                        File addfile = new File(key);
+                        if (addfile.exists() && !currmap.containsKey(key)) {
+                            System.err.println(
+                                    "There is an " + "untracked file in the way; " + "delete it or add it first.");
+                            return;
+                        }
+                        addfile.delete();
+                        addfile.createNewFile();
+                        File branchfile = new File(".gitlet", branchmap.get(key));
+                        Utils.writeContents(addfile, Utils.readContents(branchfile));
                     }
+                    for (String key : currmap.keySet()) {
+                        if (!branchmap.containsKey(key)) {
+                            File rmfile = new File(key);
+                            rmfile.delete();
+                        }
+                    }
+                    File staging = new File(".gitlet", ".staging");
+                    staging.delete();
+                    staging.mkdir();
+                    branchdata.setcurrent(branchname);
+                    File gitlet = new File(".gitlet");
+                    storeasfile("BranchData", gitlet, branchdata);
+                    return;
+                } else {
+                    System.err.println("No such branch exists.");
+                    return;
                 }
-                File staging = new File(".gitlet", ".staging");
-                staging.delete();
-                staging.mkdir();
-                branchdata.setcurrent(branchname);
-                File gitlet = new File(".gitlet");
-                storeasfile("BranchData", gitlet, branchdata);
-                return;
-            } else {
-                System.err.println("No such branch exists.");
-                return;
             }
         }
-    }
         System.err.println("Incorrect operands.");
         return;
-}
+    }
 
-/**
- * Helper method which commits with a COMMITMESSAGE.
- * @throws IOException
- */
-private static void commit(String commitmessage) throws IOException {
-    if (commitmessage.equals("")) {
-        System.err.println("Please enter a commit message.");
-        return;
-    }
-    File stagingarea = new File(".gitlet", ".staging");
-    BranchData branchdata = getBDobject();
-    if (!branchdata.hasuntracked() && stagingarea.list().length == 0) {
-        System.err.println("No changes added to the commit.");
-        return;
-    }
-    Commit thiscommit = new Commit(commitmessage, branchdata.getcurrhead());
-    File previouscommit = new File(".gitlet/.commits",
-            branchdata.getcurrhead());
-    Commit previouscommitobj = getcommitobject(previouscommit);
-    HashMap<String, String> commitmap = previouscommitobj.getmap();
-    for (String key : commitmap.keySet()) {
-        String hashfrommap = commitmap.get(key);
-        if (!branchdata.contains(key)) {
-            thiscommit.add(key, hashfrommap);
+    /**
+     * Helper method which commits with a COMMITMESSAGE.
+     * @throws IOException
+     */
+    private static void commit(String commitmessage) throws IOException {
+        if (commitmessage.equals("")) {
+            System.err.println("Please enter a commit message.");
+            return;
         }
+        File stagingarea = new File(".gitlet", ".staging");
+        BranchData branchdata = getBDobject();
+        if (!branchdata.hasuntracked() && stagingarea.list().length == 0) {
+            System.err.println("No changes added to the commit.");
+            return;
+        }
+        Commit thiscommit = new Commit(commitmessage, branchdata.getcurrhead());
+        File previouscommit = new File(".gitlet/.commits", branchdata.getcurrhead());
+        Commit previouscommitobj = getcommitobject(previouscommit);
+        HashMap<String, String> commitmap = previouscommitobj.getmap();
+        for (String key : commitmap.keySet()) {
+            String hashfrommap = commitmap.get(key);
+            if (!branchdata.contains(key)) {
+                thiscommit.add(key, hashfrommap);
+            }
+        }
+        List<String> listoffiles = Utils.plainFilenamesIn(stagingarea);
+        for (String file : listoffiles) {
+            File stagedfile = new File(stagingarea, file);
+            String shacode = Utils.sha1(Utils.readContents(stagedfile));
+            thiscommit.add(file, shacode);
+            File commitedfile = new File(".gitlet", shacode);
+            commitedfile.createNewFile();
+            Utils.writeContents(commitedfile, Utils.readContents(stagedfile));
+            stagedfile.delete();
+        }
+        String commithashcode = thiscommit.shaname();
+        File gitlet = new File(".gitlet");
+        File commits = new File(".gitlet", ".commits");
+        storeasfile(commithashcode, commits, thiscommit);
+        branchdata.addcommit(commithashcode);
+        storeasfile("BranchData", gitlet, branchdata);
     }
-    List<String> listoffiles = Utils.plainFilenamesIn(stagingarea);
-    for (String file : listoffiles) {
-        File stagedfile = new File(stagingarea, file);
-        String shacode = Utils.sha1(Utils.readContents(stagedfile));
-        thiscommit.add(file, shacode);
-        File commitedfile = new File(".gitlet", shacode);
-        commitedfile.createNewFile();
-        Utils.writeContents(commitedfile, Utils.readContents(stagedfile));
-        stagedfile.delete();
-    }
-    String commithashcode = thiscommit.shaname();
-    File gitlet = new File(".gitlet");
-    File commits = new File(".gitlet", ".commits");
-    storeasfile(commithashcode, commits, thiscommit);
-    branchdata.addcommit(commithashcode);
-    storeasfile("BranchData", gitlet, branchdata);
-}
 
-/**
- * Private method which handles remove file functionality using a
- * file name variable FILENAME2.
- * @throws IOException
- */
-private static void remove(String filename2) throws IOException {
-    File removed = new File(filename2);
-    boolean remove = false;
-    File stagingarea = new File(".gitlet", ".staging");
-    BranchData branchdata = getBDobject();
-    String headcommit = branchdata.getcurrhead();
-    File currcommit = new File(".gitlet/.commits", headcommit);
-    Commit currcommitobj = getcommitobject(currcommit);
-    if (currcommitobj.contains(filename2)) {
-        if (branchdata.contains(filename2)) {
-            remove = false;
-        } else {
+    /**
+     * Private method which handles remove file functionality using a file name
+     * variable FILENAME2.
+     * @throws IOException
+     */
+    private static void remove(String filename2) throws IOException {
+        File removed = new File(filename2);
+        boolean remove = false;
+        File stagingarea = new File(".gitlet", ".staging");
+        BranchData branchdata = getBDobject();
+        String headcommit = branchdata.getcurrhead();
+        File currcommit = new File(".gitlet/.commits", headcommit);
+        Commit currcommitobj = getcommitobject(currcommit);
+        if (currcommitobj.contains(filename2)) {
+            if (branchdata.contains(filename2)) {
+                remove = false;
+            } else {
+                remove = true;
+            }
+            branchdata.untrack(filename2);
+            Utils.restrictedDelete(removed);
+        }
+        File stagedfile = new File(stagingarea, filename2);
+        if (stagedfile.exists()) {
+            stagedfile.delete();
             remove = true;
         }
-        branchdata.untrack(filename2);
-        Utils.restrictedDelete(removed);
+        if (!remove) {
+            System.err.println("No reason to remove the file.");
+            return;
+        }
+        File gitlet2 = new File(".gitlet");
+        storeasfile("BranchData", gitlet2, branchdata);
     }
-    File stagedfile = new File(stagingarea, filename2);
-    if (stagedfile.exists()) {
-        stagedfile.delete();
-        remove = true;
-    }
-    if (!remove) {
-        System.err.println("No reason to remove the file.");
-        return;
-    }
-    File gitlet2 = new File(".gitlet");
-    storeasfile("BranchData", gitlet2, branchdata);
-}
 
-/** Private method which handles the status functionality. */
-private static void status() {
-    BranchData statusBranch = getBDobject();
-    System.out.println("=== Branches ===");
-    String star = statusBranch.getcurrent();
-    Set<String> branches = statusBranch.getBranches().keySet();
-    if (branches.size() != 0) {
-        String[] branchesarray = new String[branches.size()];
-        branches.toArray(branchesarray);
-        Arrays.sort(branchesarray);
-        for (String branchname : branchesarray) {
-            if (star.equals(branchname)) {
-                branchname = "*" + star;
+    /** Private method which handles the status functionality. */
+    private static void status() {
+        BranchData statusBranch = getBDobject();
+        System.out.println("=== Branches ===");
+        String star = statusBranch.getcurrent();
+        Set<String> branches = statusBranch.getBranches().keySet();
+        if (branches.size() != 0) {
+            String[] branchesarray = new String[branches.size()];
+            branches.toArray(branchesarray);
+            Arrays.sort(branchesarray);
+            for (String branchname : branchesarray) {
+                if (star.equals(branchname)) {
+                    branchname = "*" + star;
+                }
+                System.out.println(branchname);
             }
-            System.out.println(branchname);
         }
-    }
-    System.out.println();
-    System.out.println("=== Staged Files ===");
-    File staging = new File(".gitlet", ".staging");
-    List<String> filenames = Utils.plainFilenamesIn(staging);
-    for (String name : filenames) {
-        System.out.println(name);
-    }
-    System.out.println();
-    System.out.println("=== Removed Files ===");
-    Set<String> removing = statusBranch.getUntracked();
-    if (removing.size() != 0) {
-        String[] removal = new String[removing.size()];
-        removing.toArray(removal);
-        Arrays.sort(removal);
-        for (String str : removal) {
-            System.out.println(str);
-        }
-    }
-    System.out.println();
-    System.out.println("=== Modifications Not Staged For Commit ===");
-    // ArrayList<String> Modified = new ArrayList<String>();
-    // ArrayList<String> Deleted = new ArrayList<String>();
-    // ArrayList<String> Tracked = new ArrayList<String>();
-    // ArrayList<String> WorkingDir = new ArrayList<String>();
-    // BranchData currBranch = getBDobject();
-    // Commit currCommit = currBranch.getcurrobj();
-    // HashMap<String, String> commitFiles = currCommit.getmap();
-    // Set<String> hashStrings = currCommit.getmap().keySet();
-    // File stagingfolder = new File(".gitlet", ".staging");
-    // List<String> stagingfiles = Utils.plainFilenamesIn(stagingfolder);
-    // File workDir = new File(".");
-    // List<String> workingfiles = Utils.plainFilenamesIn(workDir);
-    // for (String name: workingfiles) {
-    // File temp = new File(name);
-    // String temphash = Utils.sha1(Utils.readContents(temp));
-    // if (hashStrings.contains(name) && (!
-    // commitFiles.get(name).equals(temphash))) {
-    // Modified.add(name);
-    // }
-    // if (stagingfiles.contains(name)) {
-    // File stagingtemp = new File(stagingfolder, name);
-    // String staginghash = Utils.sha1(Utils.readContents(stagingtemp));
-    // if (staginghash != temphash) {
-    // Modified.add(name);
-    // }
-    // }
-    // if ((! currBranch.getUntracked().contains(name))
-    // && hashStrings.contains(name)
-    // && (! workingfiles.contains(name))) {
-    // Modified.add(name);
-    // }
-    // }
-    //
-    // for (String stagefile: stagingfiles) {
-    // if (! workingfiles.contains(stagefile)) {
-    // Deleted.add(stagefile);
-    // }
-    // }
-    //
-    // for (String deletedfile: Deleted) {
-    // System.out.println(deletedfile + " (deleted)");
-    // }
-    //
-    // for (String modifiedfile: Modified) {
-    // System.out.println(modifiedfile + " (modified)");
-    // }
-    System.out.println();
-    System.out.println("=== Untracked Files ===");
-    // File allCommits = new File(".gitlet", ".commits");
-    // List<String> allCommitFiles = Utils.plainFilenamesIn(allCommits);
-    // ArrayList<String> commitNames = new ArrayList<String>();
-    // File workingDir = new File(".");
-    // List<String> workingdirfiles = Utils.plainFilenamesIn(workingDir);
-    // for (String untracked: workingdirfiles) {
-    // File checkCommit = new File(untracked);
-    // String tempCommitID = Utils.sha1(Utils.readContents(checkCommit));
-    // if ((! stagingfiles.contains(untracked)) ||
-    // currBranch.getUntracked().contains(untracked)
-    // || (! commitNames.contains(tempCommitID))) {
-    // System.out.println(untracked);
-    // }
-    // }
-
-}
-
-/** Method which locates all the commits with a TARGETMESSAGE. */
-private static void find(String targetmessage) {
-    boolean noneFound = true;
-    File commits = new File(".gitlet", ".commits");
-    File[] commitfiles = commits.listFiles();
-    for (File commit : commitfiles) {
-        Commit current = getcommitobject(commit);
-        if (current.commitmessage().equals(targetmessage)) {
-            noneFound = false;
-            System.out.println(current.shaname());
-        }
-    }
-    if (noneFound) {
-        System.out.println("Found no commit with that message.");
-    }
-}
-
-/** Private method which handles global-log functionality. */
-private static void globallog() {
-    File commits = new File(".gitlet", ".commits");
-    File[] commitfiles = commits.listFiles();
-    for (File commit : commitfiles) {
-        Commit current = getcommitobject(commit);
-        System.out.println("===");
-        System.out.println("Commit "
-                + current.shaname());
-        System.out.println(current.timestamp());
-        System.out.println(current.commitmessage());
         System.out.println();
-    }
-}
-
-/**
- * Private method which performs the rm-branch functionality using a
- * BRANCHNAME2.
- * @throws IOException
- */
-private static void rmbranch(String branchname2) throws IOException {
-    BranchData bd = getBDobject();
-    if (bd.iscurrent(branchname2)) {
-        // throw an error cannot remove the branch we are on
-        return;
-    }
-    if (!bd.removebranch(branchname2)) {
-        System.err.println("A branch with that name does not exist.");
-        return;
-    }
-    File gitlet = new File(".gitlet");
-    storeasfile("BranchData", gitlet, bd);
-}
-
-/** Private method which handles log functionality. */
-private static void log() {
-    BranchData headpointer = getBDobject();
-    Commit commit = headpointer.getcurrobj();
-    System.out.println("===");
-    System.out.println("Commit " + headpointer.getcurrhead());
-    System.out.println(commit.timestamp());
-    System.out.println(commit.commitmessage());
-    while (commit.haspreviouscommit()) {
+        System.out.println("=== Staged Files ===");
+        File staging = new File(".gitlet", ".staging");
+        List<String> filenames = Utils.plainFilenamesIn(staging);
+        for (String name : filenames) {
+            System.out.println(name);
+        }
         System.out.println();
-        Commit pointer = commit;
-        commit = commit.prevobj();
+        System.out.println("=== Removed Files ===");
+        Set<String> removing = statusBranch.getUntracked();
+        if (removing.size() != 0) {
+            String[] removal = new String[removing.size()];
+            removing.toArray(removal);
+            Arrays.sort(removal);
+            for (String str : removal) {
+                System.out.println(str);
+            }
+        }
+        System.out.println();
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        // ArrayList<String> Modified = new ArrayList<String>();
+        // ArrayList<String> Deleted = new ArrayList<String>();
+        // ArrayList<String> Tracked = new ArrayList<String>();
+        // ArrayList<String> WorkingDir = new ArrayList<String>();
+        // BranchData currBranch = getBDobject();
+        // Commit currCommit = currBranch.getcurrobj();
+        // HashMap<String, String> commitFiles = currCommit.getmap();
+        // Set<String> hashStrings = currCommit.getmap().keySet();
+        // File stagingfolder = new File(".gitlet", ".staging");
+        // List<String> stagingfiles = Utils.plainFilenamesIn(stagingfolder);
+        // File workDir = new File(".");
+        // List<String> workingfiles = Utils.plainFilenamesIn(workDir);
+        // for (String name: workingfiles) {
+        // File temp = new File(name);
+        // String temphash = Utils.sha1(Utils.readContents(temp));
+        // if (hashStrings.contains(name) && (!
+        // commitFiles.get(name).equals(temphash))) {
+        // Modified.add(name);
+        // }
+        // if (stagingfiles.contains(name)) {
+        // File stagingtemp = new File(stagingfolder, name);
+        // String staginghash = Utils.sha1(Utils.readContents(stagingtemp));
+        // if (staginghash != temphash) {
+        // Modified.add(name);
+        // }
+        // }
+        // if ((! currBranch.getUntracked().contains(name))
+        // && hashStrings.contains(name)
+        // && (! workingfiles.contains(name))) {
+        // Modified.add(name);
+        // }
+        // }
+        //
+        // for (String stagefile: stagingfiles) {
+        // if (! workingfiles.contains(stagefile)) {
+        // Deleted.add(stagefile);
+        // }
+        // }
+        //
+        // for (String deletedfile: Deleted) {
+        // System.out.println(deletedfile + " (deleted)");
+        // }
+        //
+        // for (String modifiedfile: Modified) {
+        // System.out.println(modifiedfile + " (modified)");
+        // }
+        System.out.println();
+        System.out.println("=== Untracked Files ===");
+        // File allCommits = new File(".gitlet", ".commits");
+        // List<String> allCommitFiles = Utils.plainFilenamesIn(allCommits);
+        // ArrayList<String> commitNames = new ArrayList<String>();
+        // File workingDir = new File(".");
+        // List<String> workingdirfiles = Utils.plainFilenamesIn(workingDir);
+        // for (String untracked: workingdirfiles) {
+        // File checkCommit = new File(untracked);
+        // String tempCommitID = Utils.sha1(Utils.readContents(checkCommit));
+        // if ((! stagingfiles.contains(untracked)) ||
+        // currBranch.getUntracked().contains(untracked)
+        // || (! commitNames.contains(tempCommitID))) {
+        // System.out.println(untracked);
+        // }
+        // }
+
+    }
+
+    /** Method which locates all the commits with a TARGETMESSAGE. */
+    private static void find(String targetmessage) {
+        boolean noneFound = true;
+        File commits = new File(".gitlet", ".commits");
+        File[] commitfiles = commits.listFiles();
+        for (File commit : commitfiles) {
+            Commit current = getcommitobject(commit);
+            if (current.commitmessage().equals(targetmessage)) {
+                noneFound = false;
+                System.out.println(current.shaname());
+            }
+        }
+        if (noneFound) {
+            System.out.println("Found no commit with that message.");
+        }
+    }
+
+    /** Private method which handles global-log functionality. */
+    private static void globallog() {
+        File commits = new File(".gitlet", ".commits");
+        File[] commitfiles = commits.listFiles();
+        for (File commit : commitfiles) {
+            Commit current = getcommitobject(commit);
+            System.out.println("===");
+            System.out.println("Commit " + current.shaname());
+            System.out.println(current.timestamp());
+            System.out.println(current.commitmessage());
+            System.out.println();
+        }
+    }
+
+    /**
+     * Private method which performs the rm-branch functionality using a
+     * BRANCHNAME2.
+     * @throws IOException
+     */
+    private static void rmbranch(String branchname2) throws IOException {
+        BranchData bd = getBDobject();
+        if (bd.iscurrent(branchname2)) {
+            System.err.println("Cannot remove the current branch.");
+            return;
+        }
+        if (!bd.removebranch(branchname2)) {
+            System.err.println("A branch with that name does not exist.");
+            return;
+        }
+        File gitlet = new File(".gitlet");
+        storeasfile("BranchData", gitlet, bd);
+    }
+
+    /** Private method which handles log functionality. */
+    private static void log() {
+        BranchData headpointer = getBDobject();
+        Commit commit = headpointer.getcurrobj();
         System.out.println("===");
-        System.out.println("Commit " + pointer.prev());
+        System.out.println("Commit " + headpointer.getcurrhead());
         System.out.println(commit.timestamp());
         System.out.println(commit.commitmessage());
+        while (commit.haspreviouscommit()) {
+            System.out.println();
+            Commit pointer = commit;
+            commit = commit.prevobj();
+            System.out.println("===");
+            System.out.println("Commit " + pointer.prev());
+            System.out.println(commit.timestamp());
+            System.out.println(commit.commitmessage());
+        }
+        System.out.println();
     }
-    System.out.println();
-}
 
-/**
- * Private method which performs the branch functionality using a
- * BRANCHNAME.
- * @throws IOException
- */
-private static void branch(String branchname) throws IOException {
-    BranchData bd = getBDobject();
-    if (bd.containsbranch(branchname)) {
-        System.err.println("A branch with that name already exists.");
+    /**
+     * Private method which performs the branch functionality using a
+     * BRANCHNAME.
+     * @throws IOException
+     */
+    private static void branch(String branchname) throws IOException {
+        BranchData bd = getBDobject();
+        if (bd.containsbranch(branchname)) {
+            System.err.println("A branch with that name already exists.");
+        }
+        bd.addbranch(branchname, bd.getcurrhead());
+        File gitlet = new File(".gitlet");
+        storeasfile("BranchData", gitlet, bd);
     }
-    bd.addbranch(branchname, bd.getcurrhead());
-    File gitlet = new File(".gitlet");
-    storeasfile("BranchData", gitlet, bd);
-}
 
-/**
- * Helper method which fetches all the branch files with a given PATHNAME
- * starting with the HEADCOMMIT and BRANCHNAME from a remote directory.
- * @throws IOException
- */
-private static void fetchfiles(String pathname,
-        Commit headcommit, String branchname) throws IOException {
-    File gitlet = new File(pathname, ".gitlet");
-    File commits = new File(gitlet, ".commits");
-    storeasfile(headcommit.shaname(), commits, headcommit);
-    HashMap<String, String> commitmap = headcommit.getmap();
-    for (String file : commitmap.keySet()) {
-        File fileR = new File(pathname, file);
-        File store = new File(".gitlet", commitmap.get(file));
-        Utils.writeContents(store, Utils.readContents(fileR));
-    }
-    while (headcommit.haspreviouscommit()) {
-        Commit prevcommit = headcommit.prevremoteobj(pathname);
-        String prev = prevcommit.shaname();
-        HashMap<String, String> commitmap2 = prevcommit.getmap();
-        for (String file : commitmap2.keySet()) {
+    /**
+     * Helper method which fetches all the branch files with a given PATHNAME
+     * starting with the HEADCOMMIT and BRANCHNAME from a remote directory.
+     * @throws IOException
+     */
+    private static void fetchfiles(String pathname, Commit headcommit, String branchname) throws IOException {
+        File gitlet = new File(pathname, ".gitlet");
+        File commits = new File(gitlet, ".commits");
+        storeasfile(headcommit.shaname(), commits, headcommit);
+        HashMap<String, String> commitmap = headcommit.getmap();
+        for (String file : commitmap.keySet()) {
             File fileR = new File(pathname, file);
             File store = new File(".gitlet", commitmap.get(file));
             Utils.writeContents(store, Utils.readContents(fileR));
         }
-        storeasfile(prev, commits, headcommit);
-    }
-}
-
-/**
- * Helper method which actually merges the CURR and GIVEN file using a
- * KEY to create the file.
- * @throws IOException
- */
-private static void mergefiles(String curr,
-        String given, String key) throws IOException {
-    File merged = new File(key);
-    merged.createNewFile();
-    String first = new String("<<<<<<< HEAD\n");
-    byte[] firstb = first.getBytes();
-    String second = new String("=======\n");
-    String third = new String(">>>>>>>\n");
-    byte[] secondb = second.getBytes();
-    byte[] thirdb = third.getBytes();
-    byte[] currb = new byte[0];
-    byte[] givenb = new byte[0];
-    if (!(curr == null)) {
-        File curfile = new File(".gitlet", curr);
-        givenb = Utils.readContents(curfile);
-    }
-    if (!(given == null)) {
-        File givenfile = new File(".gitlet", given);
-        givenb = Utils.readContents(givenfile);
-    }
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    outputStream.write(firstb);
-    outputStream.write(currb);
-    outputStream.write(secondb);
-    outputStream.write(givenb);
-    outputStream.write(thirdb);
-    byte[] c = outputStream.toByteArray();
-    Utils.writeContents(merged, c);
-}
-
-/**
- * Checkout helper method which performs checkout of a single file
- * according to its FILENAME and writes info to the BRANCHDATA.
- * @throws IOException
- */
-private static void checkoutone(String filename,
-        BranchData branchdata) throws IOException {
-    Commit headcommitobj = branchdata.getcurrobj();
-    HashMap<String, String> map = headcommitobj.getmap();
-    if (map.get(filename) != null) {
-        File repofile = new File(".gitlet", map.get(filename));
-        if (repofile.exists()) {
-            File tobeadded = new File(filename);
-            tobeadded.createNewFile();
-            Utils.writeContents(tobeadded, Utils.readContents(repofile));
-        }
-    } else {
-        System.err.print("File does not exist in that commit.");
-    }
-    File gitlet = new File(".gitlet");
-    storeasfile("BranchData", gitlet, branchdata);
-}
-
-/**
- * Private helper method which performs the init functionality.
- * @throws IOException
- */
-private static void init() throws IOException {
-    File gitlet = new File(".gitlet");
-    if (!gitlet.exists()) {
-        gitlet.mkdir();
-        File stagingarea = new File(gitlet, ".staging");
-        stagingarea.mkdir();
-        File commits = new File(gitlet, ".commits");
-        commits.mkdir();
-        Commit initialcommit = new Commit("initial commit", null);
-        String initcommit =
-                initialcommit.shaname();
-        storeasfile(initcommit, commits, initialcommit);
-        BranchData branchData = new BranchData("master", initcommit);
-        storeasfile("BranchData", gitlet, branchData);
-    } else {
-        System.err.println("A gitlet version-control system "
-                + "already exists in the current directory.");
-    }
-}
-
-/**
- * Reset method puts the branch back to the commit which is the input.
- * @throws IOException
- */
-private static void reset(String commitid) throws IOException {
-    File commits = new File(".gitlet", ".commits");
-    File commitidf = null;
-    if (commitid.length() != 40) {
-
-        FilenameFilter filter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                int lastIndex = commitid.length();
-                String str = name.substring(0, lastIndex);
-                if (str.equals(commitid)) {
-                    return true;
-                }
-                return false;
+        while (headcommit.haspreviouscommit()) {
+            Commit prevcommit = headcommit.prevremoteobj(pathname);
+            String prev = prevcommit.shaname();
+            HashMap<String, String> commitmap2 = prevcommit.getmap();
+            for (String file : commitmap2.keySet()) {
+                File fileR = new File(pathname, file);
+                File store = new File(".gitlet", commitmap.get(file));
+                Utils.writeContents(store, Utils.readContents(fileR));
             }
-        };
-        File[] allfiles = commits.listFiles(filter);
-        commitidf = allfiles[0];
-    } else {
-        commitidf = new File(".gitlet/.commits", commitid);
+            storeasfile(prev, commits, headcommit);
+        }
     }
-    if (!commitidf.exists()) {
-        System.err.print("No commit with that id exists.");
-        return;
+
+    /**
+     * Helper method which actually merges the CURR and GIVEN file using a KEY
+     * to create the file.
+     * @throws IOException
+     */
+    private static void mergefiles(String curr, String given, String key) throws IOException {
+        File merged = new File(key);
+        merged.createNewFile();
+        String first = new String("<<<<<<< HEAD\n");
+        byte[] firstb = first.getBytes();
+        String second = new String("=======\n");
+        String third = new String(">>>>>>>\n");
+        byte[] secondb = second.getBytes();
+        byte[] thirdb = third.getBytes();
+        byte[] currb = new byte[0];
+        byte[] givenb = new byte[0];
+        if (!(curr == null)) {
+            File curfile = new File(".gitlet", curr);
+            givenb = Utils.readContents(curfile);
+        }
+        if (!(given == null)) {
+            File givenfile = new File(".gitlet", given);
+            givenb = Utils.readContents(givenfile);
+        }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        outputStream.write(firstb);
+        outputStream.write(currb);
+        outputStream.write(secondb);
+        outputStream.write(givenb);
+        outputStream.write(thirdb);
+        byte[] c = outputStream.toByteArray();
+        Utils.writeContents(merged, c);
     }
-    BranchData bd = getBDobject();
-    Commit argcommit = getcommitobject(commitidf);
-    Commit currcommit = bd.getcurrobj();
-    HashMap<String, String> argmap = argcommit.getmap();
-    HashMap<String, String> currmap = currcommit.getmap();
-    File thisdir = new File(".");
-    File[] fileshere = thisdir.listFiles();
-    for (File file : fileshere) {
-        String name = file.getName();
-        if (!currmap.containsKey(name)
-                && argmap.containsKey(name)) {
-            System.err.println("There is an untracked "
-                    + "file in the way; delete it or add it first.");
+
+    /**
+     * Checkout helper method which performs checkout of a single file according
+     * to its FILENAME and writes info to the BRANCHDATA.
+     * 
+     * @throws IOException
+     */
+    private static void checkoutone(String filename, BranchData branchdata) throws IOException {
+        Commit headcommitobj = branchdata.getcurrobj();
+        HashMap<String, String> map = headcommitobj.getmap();
+        if (map.get(filename) != null) {
+            File repofile = new File(".gitlet", map.get(filename));
+            if (repofile.exists()) {
+                File tobeadded = new File(filename);
+                tobeadded.createNewFile();
+                Utils.writeContents(tobeadded, Utils.readContents(repofile));
+            }
+        } else {
+            System.err.print("File does not exist in that commit.");
+        }
+        File gitlet = new File(".gitlet");
+        storeasfile("BranchData", gitlet, branchdata);
+    }
+
+    /**
+     * Private helper method which performs the init functionality.
+     * 
+     * @throws IOException
+     */
+    private static void init() throws IOException {
+        File gitlet = new File(".gitlet");
+        if (!gitlet.exists()) {
+            gitlet.mkdir();
+            File stagingarea = new File(gitlet, ".staging");
+            stagingarea.mkdir();
+            File commits = new File(gitlet, ".commits");
+            commits.mkdir();
+            Commit initialcommit = new Commit("initial commit", null);
+            String initcommit = initialcommit.shaname();
+            storeasfile(initcommit, commits, initialcommit);
+            BranchData branchData = new BranchData("master", initcommit);
+            storeasfile("BranchData", gitlet, branchData);
+        } else {
+            System.err.println("A gitlet version-control system " + "already exists in the current directory.");
+        }
+    }
+
+    /**
+     * Reset method puts the branch back to the commit which is the input.
+     * 
+     * @throws IOException
+     */
+    private static void reset(String commitid) throws IOException {
+        File commits = new File(".gitlet", ".commits");
+        File commitidf = null;
+        if (commitid.length() != 40) {
+
+            FilenameFilter filter = new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    int lastIndex = commitid.length();
+                    String str = name.substring(0, lastIndex);
+                    if (str.equals(commitid)) {
+                        return true;
+                    }
+                    return false;
+                }
+            };
+            File[] allfiles = commits.listFiles(filter);
+            commitidf = allfiles[0];
+        } else {
+            commitidf = new File(".gitlet/.commits", commitid);
+        }
+        if (!commitidf.exists()) {
+            System.err.print("No commit with that id exists.");
             return;
         }
-    }
-    for (String key : currmap.keySet()) {
-        if (!argmap.containsKey(key)) {
-            File rmfile = new File(key);
-            rmfile.delete();
+        BranchData bd = getBDobject();
+        Commit argcommit = getcommitobject(commitidf);
+        Commit currcommit = bd.getcurrobj();
+        HashMap<String, String> argmap = argcommit.getmap();
+        HashMap<String, String> currmap = currcommit.getmap();
+        File thisdir = new File(".");
+        File[] fileshere = thisdir.listFiles();
+        for (File file : fileshere) {
+            String name = file.getName();
+            if (!currmap.containsKey(name) && argmap.containsKey(name)) {
+                System.err.println("There is an untracked " + "file in the way; delete it or add it first.");
+                return;
+            }
         }
-    }
-    for (String key : argmap.keySet()) {
-        File addfile = new File(key);
-        if (!addfile.exists()) {
-            addfile.createNewFile();
+        for (String key : currmap.keySet()) {
+            if (!argmap.containsKey(key)) {
+                File rmfile = new File(key);
+                rmfile.delete();
+            }
         }
-        File branchfile = new File(".gitlet", argmap.get(key));
-        Utils.writeContents(addfile, Utils.readContents(branchfile));
-    }
-    File staging = new File(".gitlet", ".staging");
-    File[] tobestaged = staging.listFiles();
-    for (File file : tobestaged) {
-        file.delete();
-    }
-    bd.setcurrhead(commitidf.getName());
-    File gitlet = new File(".gitlet");
-    storeasfile("BranchData", gitlet, bd);
-}
-
-/**
- * Method which performs the add functionality, takes in the name of the
- * file as an arg.
- * @throws IOException
- */
-public static void add(String filename) throws IOException {
-    File herefile = new File(filename);
-    BranchData bd = getBDobject();
-    File gitlet = new File(".gitlet");
-    if (bd.contains(filename)) {
+        for (String key : argmap.keySet()) {
+            File addfile = new File(key);
+            if (!addfile.exists()) {
+                addfile.createNewFile();
+            }
+            File branchfile = new File(".gitlet", argmap.get(key));
+            Utils.writeContents(addfile, Utils.readContents(branchfile));
+        }
+        File staging = new File(".gitlet", ".staging");
+        File[] tobestaged = staging.listFiles();
+        for (File file : tobestaged) {
+            file.delete();
+        }
+        bd.setcurrhead(commitidf.getName());
+        File gitlet = new File(".gitlet");
         storeasfile("BranchData", gitlet, bd);
-        return;
     }
-    if (herefile.exists()) {
+
+    /**
+     * Method which performs the add functionality, takes in the name of the
+     * file as an arg.
+     * 
+     * @throws IOException
+     */
+    public static void add(String filename) throws IOException {
+        File herefile = new File(filename);
+        BranchData bd = getBDobject();
+        File gitlet = new File(".gitlet");
         if (bd.contains(filename)) {
-            File stagingarea = new File(".gitlet", ".staging");
-            File added = new File(stagingarea, filename);
-            added.createNewFile();
-            Utils.writeContents(added, Utils.readContents(herefile));
             storeasfile("BranchData", gitlet, bd);
             return;
         }
-        Commit current = bd.getcurrobj();
-        File stagingarea = new File(".gitlet", ".staging");
-        File added = new File(stagingarea, filename);
-        String hash = Utils.sha1(Utils.readContents(herefile));
-        boolean checker = current.containsversion(filename, hash);
-        if (checker) {
+        if (herefile.exists()) {
+            if (bd.contains(filename)) {
+                File stagingarea = new File(".gitlet", ".staging");
+                File added = new File(stagingarea, filename);
+                added.createNewFile();
+                Utils.writeContents(added, Utils.readContents(herefile));
+                storeasfile("BranchData", gitlet, bd);
+                return;
+            }
+            Commit current = bd.getcurrobj();
+            File stagingarea = new File(".gitlet", ".staging");
+            File added = new File(stagingarea, filename);
+            String hash = Utils.sha1(Utils.readContents(herefile));
+            boolean checker = current.containsversion(filename, hash);
+            if (checker) {
+                return;
+            }
+            added.createNewFile();
+            Utils.writeContents(added, Utils.readContents(herefile));
+            byte[] file = Utils.readContents(added);
+            String hashcode = Utils.sha1(file);
+            File tobeadded = new File(".gitlet", hashcode);
+        } else {
+            System.err.println("File does not exist.");
             return;
         }
-        added.createNewFile();
-        Utils.writeContents(added, Utils.readContents(herefile));
-        byte[] file = Utils.readContents(added);
-        String hashcode = Utils.sha1(file);
-        File tobeadded = new File(".gitlet", hashcode);
-    } else {
-        System.err.println("File does not exist.");
-        return;
     }
-}
 
-/**
- * Method to convert a FILE object and return a COMMIT object object by
- * reading the given file and deserializing it.
- */
-public static Commit getcommitobject(File file) {
-    Commit obj;
-    try {
-        ObjectInputStream inp =
-                new ObjectInputStream(new FileInputStream(file));
-        obj = (Commit) inp.readObject();
-        inp.close();
-    } catch (IOException | ClassNotFoundException excp) {
-        obj = null;
+    /**
+     * Method to convert a FILE object and return a COMMIT object object by
+     * reading the given file and deserializing it.
+     */
+    public static Commit getcommitobject(File file) {
+        Commit obj;
+        try {
+            ObjectInputStream inp = new ObjectInputStream(new FileInputStream(file));
+            obj = (Commit) inp.readObject();
+            inp.close();
+        } catch (IOException | ClassNotFoundException excp) {
+            obj = null;
+        }
+        return obj;
     }
-    return obj;
-}
 
-/**
- * Method to convert a file object into and return a BRANCHDATA object by
- * reading the given file and deserializing it.
- */
-private static BranchData getBDobject() {
-    File file = new File(".gitlet", "BranchData");
-    BranchData obj;
-    try {
-        ObjectInputStream inp =
-                new ObjectInputStream(new FileInputStream(file));
-        obj = (BranchData) inp.readObject();
-        inp.close();
-    } catch (IOException | ClassNotFoundException excp) {
-        obj = null;
+    /**
+     * Method to convert a file object into and return a BRANCHDATA object by
+     * reading the given file and deserializing it.
+     */
+    private static BranchData getBDobject() {
+        File file = new File(".gitlet", "BranchData");
+        BranchData obj;
+        try {
+            ObjectInputStream inp = new ObjectInputStream(new FileInputStream(file));
+            obj = (BranchData) inp.readObject();
+            inp.close();
+        } catch (IOException | ClassNotFoundException excp) {
+            obj = null;
+        }
+        return obj;
     }
-    return obj;
-}
 
-/** Method which returns the BRANCHDATA object from a remote REPO branch. */
-private static BranchData getremoteBD(String repo) {
-    File repof = new File(repo, ".gitlet");
-    File file = new File(repof, "BranchData");
-    BranchData obj;
-    try {
-        ObjectInputStream inp =
-                new ObjectInputStream(new FileInputStream(file));
-        obj = (BranchData) inp.readObject();
-        inp.close();
-    } catch (IOException | ClassNotFoundException excp) {
-        obj = null;
+    /** Method which returns the BRANCHDATA object from a remote REPO branch. */
+    private static BranchData getremoteBD(String repo) {
+        File repof = new File(repo, ".gitlet");
+        File file = new File(repof, "BranchData");
+        BranchData obj;
+        try {
+            ObjectInputStream inp = new ObjectInputStream(new FileInputStream(file));
+            obj = (BranchData) inp.readObject();
+            inp.close();
+        } catch (IOException | ClassNotFoundException excp) {
+            obj = null;
+        }
+        return obj;
     }
-    return obj;
-}
 
-/**
- * Method which write all commit files from a HEADCOMMIT
- * up to the point, UPTO, specified inside a remote branch PATHNAME.
- * @throws IOException
- */
-private static void writecommits(String pathname,
-        Commit headcommit, String upto) throws IOException {
-    File gitlet = new File(pathname, ".gitlet");
-    File commits = new File(gitlet, ".commits");
-    storeasfile(headcommit.shaname(), commits, headcommit);
-    while (headcommit.haspreviouscommit()) {
-        Commit prevcommit = headcommit.prevremoteobj(pathname);
-        String prev = prevcommit.shaname();
-        if (upto != null) {
-            if (prev.equals(upto)) {
-                storeasfile(prev, commits, prevcommit);
-                break;
+    /**
+     * Method which write all commit files from a HEADCOMMIT up to the point,
+     * UPTO, specified inside a remote branch PATHNAME.
+     * 
+     * @throws IOException
+     */
+    private static void writecommits(String pathname, Commit headcommit, String upto) throws IOException {
+        File gitlet = new File(pathname, ".gitlet");
+        File commits = new File(gitlet, ".commits");
+        storeasfile(headcommit.shaname(), commits, headcommit);
+        while (headcommit.haspreviouscommit()) {
+            Commit prevcommit = headcommit.prevremoteobj(pathname);
+            String prev = prevcommit.shaname();
+            if (upto != null) {
+                if (prev.equals(upto)) {
+                    storeasfile(prev, commits, prevcommit);
+                    break;
+                } else {
+                    storeasfile(prev, commits, prevcommit);
+                }
             } else {
                 storeasfile(prev, commits, prevcommit);
             }
-        } else {
-            storeasfile(prev, commits, prevcommit);
         }
     }
-}
 
-/**
- * Method to convert an object S into a file of NAME with a particular
- * PARENT.
- */
-private static void storeasfile(String name,
-        File parent, Serializable s) throws IOException {
+    /**
+     * Method to convert an object S into a file of NAME with a particular
+     * PARENT.
+     */
+    private static void storeasfile(String name, File parent, Serializable s) throws IOException {
 
-    File outFile = new File(parent, name);
-    try {
-        ObjectOutputStream out =
-                new ObjectOutputStream(new FileOutputStream(outFile));
-        out.writeObject(s);
-        out.close();
-    } catch (IOException excp) {
-        return;
+        File outFile = new File(parent, name);
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(outFile));
+            out.writeObject(s);
+            out.close();
+        } catch (IOException excp) {
+            return;
+        }
     }
-}
 }

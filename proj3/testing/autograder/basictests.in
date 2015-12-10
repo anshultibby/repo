@@ -1,21 +1,19 @@
 # Tests functionality of various functions of log and status.
-D HEADER "Commit [a-f0-9]+"
-D DATE "\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d"
 > init
 <<<
 > init
 A gitlet version-control system already exists in the current directory.
-+ dog dog
-> add dog
 <<<
-+ cat cat
-> add cat
++ dog.txt dog.txt
+> add dog.txt
 <<<
-+ mouse mouse
-> add mouse
++ cat.txt cat.txt
+> add cat.txt
 <<<
 > commit animals
 <<<
+D HEADER "Commit [a-f0-9]+"
+D DATE "\d\d\d\d-\d\d-\d\d\s+\d\d:\d\d:\d\d"
 > log
 ===
 ${HEADER}
@@ -27,4 +25,16 @@ ${HEADER}
 ${DATE}
 initial commit
 
-===
+<<<*
+> status
+=== Branches ===
+*master
+
+=== Staged Files ===
+
+=== Removed Files ===
+
+=== Modifications Not Staged For Commit ===
+
+=== Untracked Files ===
+<<<
