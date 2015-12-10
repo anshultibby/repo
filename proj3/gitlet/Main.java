@@ -375,7 +375,7 @@ public class Main {
     private static void push(String remotename, String branchname) throws IOException {
         BranchData bd = getBDobject();
         String remotepath = bd.getremotepath(remotename);
-        File remoterepo = new File(remotepath, ".gitlet");
+        File remoterepo = new File(remotepath);
         if (!remoterepo.exists()) {
             System.err.println("Remote directory not found.");
         }
@@ -413,7 +413,7 @@ public class Main {
     private static void fetch(String remotename, String branchname) throws IOException {
         BranchData bd = getBDobject();
         String remotepath = bd.getremotepath(remotename);
-        File remoterepo = new File(remotepath, ".gitlet");
+        File remoterepo = new File(remotepath);
         if (!remoterepo.exists()) {
             System.err.println("Remote directory not found.");
             return;
@@ -958,7 +958,7 @@ public class Main {
         byte[] givenb = new byte[0];
         if (!(curr == null)) {
             File curfile = new File(".gitlet", curr);
-            givenb = Utils.readContents(curfile);
+            currb = Utils.readContents(curfile);
         }
         if (!(given == null)) {
             File givenfile = new File(".gitlet", given);
