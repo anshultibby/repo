@@ -479,15 +479,29 @@ public class Main {
         merge(branchname);
     }
 
-    /** Method which performs a merge using a GIVEN branch.
-     * @throws IOException. */
-     private static void merge(String given) throws IOException {
-        File staging = new File(".gitlet", ".staging");
-        File[] stagingis = staging.listFiles();
-        if (stagingis.length != 0) {
+    /** Check staging FILES and print error if there are
+     * uncommitted changes.*/
+    private static void checkStagingFile(File[] files) {
+        if (files.length != 0) {
             System.err.println("You have uncommitted changes.");
             return;
         }
+    }
+
+    /** Stub method to print an ancestor of the current branch
+     * error message.
+     */
+    private static void ancestorPrintMsg() {
+        System.err.println("Given branch is an"
+                + " ancestor of the current branch.");
+        return;
+    }
+
+    /** Method which performs a merge using a GIVEN branch.*/
+    private static void merge(String given) throws IOException {
+        File staging = new File(".gitlet", ".staging");
+        File[] stagingis = staging.listFiles();
+        checkStagingFile(stagingis);
         BranchData bd = getBDobject();
         if (bd.containsbranch(given)) {
             if (bd.iscurrent(given)) {
@@ -497,17 +511,13 @@ public class Main {
             Commit currcommit = bd.getcurrobj();
             Commit givencommit = bd.getcommitobj(given);
             if (currcommit.shaname().equals(givencommit.shaname())) {
-                System.err.println("Given branch is an"
-                        + " ancestor of the current branch.");
-                return;
+                ancestorPrintMsg();
             }
             Commit prevofcurrent = currcommit;
             while (prevofcurrent.prev() != null) {
                 prevofcurrent = prevofcurrent.prevobj();
                 if (givencommit.shaname().equals(prevofcurrent.shaname())) {
-                    System.err.println("Given branch is an"
-                            + " ancestor of the current branch.");
-                    return;
+                    ancestorPrintMsg();
                 }
             }
             Commit prevofgiven = givencommit;
@@ -542,18 +552,22 @@ public class Main {
                     return;
                 }
             }
-            submerge(looper, splitmap, givenmap, currmap, bd, givencommit, given);
-            
+            submerge(looper, splitmap, givenmap,
+                    currmap, bd, givencommit, given);
         } else {
             System.err.println(" A branch with that name does not exist.");
         }
     }
-    /** Merge submethod to perform operations. 
+    /** Merge submethod to perform operations using the passed in sets
+     * called LOOPER, SPLITMAP, GIVENMAP, CURRMAP, BranchData BD,
+     * target commit GIVENCOMMIT, and GIVEN branch.
      * @throws IOException */
-    private static void submerge(Set<String> looper, HashMap<String, String> splitmap, HashMap<String, String> givenmap, 
-    		HashMap<String, String> currmap, BranchData bd, Commit givencommit, String given) throws IOException {
-    	boolean conflicts = false;
-    	for (String splitkey : looper) {
+    private static void submerge(Set<String> looper, HashMap<String,
+              String> splitmap, HashMap<String, String> givenmap,
+              HashMap<String, String> currmap, BranchData bd,
+              Commit givencommit, String given) throws IOException {
+        boolean conflicts = false;
+        for (String splitkey : looper) {
             String splithashval = splitmap.get(splitkey);
             String givenmapval = givenmap.get(splitkey);
             String currmapval = currmap.get(splitkey);
@@ -575,7 +589,6 @@ public class Main {
                 }
                 continue;
             }
-
             if (splithashval.equals(currmapval)
                     && (!splithashval.equals(givenmapval))) {
                 if (givenmapval == null) {
