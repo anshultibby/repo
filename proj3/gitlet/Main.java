@@ -891,7 +891,7 @@ public class Main {
     private static void rmbranch(String branchname2) throws IOException {
         BranchData bd = getBDobject();
         if (bd.iscurrent(branchname2)) {
-            // throw an error cannot remove the branch we are on
+            System.out.println("Cannot remove the current branch.");
             return;
         }
         if (!bd.removebranch(branchname2)) {
