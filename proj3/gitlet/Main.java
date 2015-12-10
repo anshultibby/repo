@@ -11,7 +11,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -598,7 +597,6 @@ public class Main {
                 String commitid = args[1];
                 checkoutcommit(filename, commitid, branchdata, true);
                 return;
-                
             } else if (args.length == 2) {
                 String branchname = args[1];
                 if (branchdata.iscurrent(branchname)) {
