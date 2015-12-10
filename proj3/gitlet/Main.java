@@ -1029,11 +1029,14 @@ public class Main {
                 File tobeadded = new File(filename);
                 tobeadded.createNewFile();
                 Utils.writeContents(tobeadded, Utils.readContents(repofile));
+                System.out.println("fuck");
             }
         } else {
         	if (print) {
             System.err.println("File does not exist in that commit.");
             return false;
+        	} else {
+        		return false;
         	}
         }
         File gitlet = new File(".gitlet");
