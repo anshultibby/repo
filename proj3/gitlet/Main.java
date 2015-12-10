@@ -439,6 +439,7 @@ public class Main {
         }
         File remoterepo = new File(remotepath);
         BranchData remotebd = (BranchData) getremoteBD(remotepath);
+        System.out.println(remotepath);
         if (!remotebd.containsbranch(branchname)) {
             System.err.println("That remote does not have that branch.");
             return;
@@ -1213,19 +1214,20 @@ public class Main {
     /** Method which returns the BRANCHDATA object from a remote REPO branch. 
      * @throws IOException*/
     private static BranchData getremoteBD(String repo) {
-        File file = new File(repo, "BranchData");
-        
+        File file = new File(repo);
+        File read = new File(file, "BranchData");
+        File file2 = new File(".gitlet", "remoteinfo");
+        Utils.writeContents(file2, Utils.readContents(read));
         BranchData obj;
         try {
             ObjectInputStream inp =
-                    new ObjectInputStream(new FileInputStream(file));
+                    new ObjectInputStream(new FileInputStream(file2));
             obj = (BranchData) inp.readObject();
             inp.close();
 
         } catch (IOException | ClassNotFoundException excp) {
             obj = null;
         }
-        
         return obj;
     }
 

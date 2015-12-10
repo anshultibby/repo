@@ -39,7 +39,9 @@ public class BranchData implements Serializable {
 
     /** Adds a REMOTENAME to a REMOTEPATH on this branchdata. */
     public void addremote(String remotename, String remotepath) {
-        remotepath.replaceAll("bar", java.io.File.separator);
+    	System.out.println(remotepath);
+        remotepath.replaceAll("\b/", java.io.File.separator);
+        System.out.println(remotepath);
         _remotes.put(remotename, remotepath);
 
     }
