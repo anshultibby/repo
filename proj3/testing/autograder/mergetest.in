@@ -38,9 +38,8 @@ D ARBLINES "(?:(?:.|\n)*(?:\n|\Z)|\A|\Z)"
 <<<
 * f.txt
 * g.txt
-= h.txt wug2.txt
-= k.txt wug3.txt
-<<<
+= h.txt h.txt
+= k.txt k.txt
 > log
 ===
 ${COMMIT_HEAD}

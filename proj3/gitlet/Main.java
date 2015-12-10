@@ -490,59 +490,60 @@ public class Main {
             HashMap<String, String> currmap = currcommit.getmap();
             HashMap<String, String> givenmap = givencommit.getmap();
             HashMap<String, String> splitmap = new HashMap<String, String>();
+            Set<String> looper = new HashSet<String>();
+            looper.addAll(currmap.keySet());
+            looper.addAll(givenmap.keySet());
             boolean conflicts = false;
             if (!skip) {
                 splitmap = splitpoint.getmap();
-                for (String splitkey : splitmap.keySet()) {
+                looper.addAll(splitmap.keySet());
+            }   
+                for (String splitkey : looper) {
+                	
                     String splithashval = splitmap.get(splitkey);
                     String givenmapval = givenmap.get(splitkey);
                     String currmapval = currmap.get(splitkey);
-                    if (splithashval.equals(currmapval) && !splithashval.equals(givenmapval)) {
-                        if (givenmapval.equals(null)) {
-                            remove(splithashval);
+                    if (splithashval == null) {
+                    	if (givenmapval == null) {
+                    		continue;
+                    	}
+                    	if (currmapval == null) {
+                    		if (checkoutcommit(splitkey, givencommit.shaname(), bd, false)) {
+                                add(splitkey);
+                                continue;
+                            }
+                    	}
+                    	
+                    }
+                    if (splithashval.equals(currmapval) && (!splithashval.equals(givenmapval))) {
+                        if (givenmapval == null) {
+                        	System.out.println("b");
+                            remove(splitkey);
                         } else {
-                            if (checkoutone(givenmapval, bd, false)) {
+                            if (checkoutcommit(givenmapval, givencommit.shaname(), bd, false)) {
                             add(splitkey);
                             }
                         }
+                        continue;
                     }
                     if (!splithashval.equals(currmapval) && splithashval.equals(givenmapval)) {
-                        if (currmapval.equals(null)) {
+                        if (currmapval == null) {
+                        	continue;
                         }
                     }
                     if (!splithashval.equals(currmapval) && !splithashval.equals(givenmapval)
                             && !givenmapval.equals(currmapval)) {
                         conflicts = true;
                         mergefiles(currmapval, givenmapval, splitkey);
+                        continue;
                     }
                 }
-            }
-            Set<String> keyset;
-            if (currmap.size() > givenmap.size()) {
-                keyset = currmap.keySet();
-            } else {
-                keyset = givenmap.keySet();
-            }
-            for (String key : keyset) {
-                if (currmap.get(key) == null) {
-                    if (checkoutone(key, bd, false)) {
-                    add(key);
-                    }
-                }
-                if (givenmap.get(key) == null) {
-                    // do nothing
-                }
-                if ((splitmap.get(key) == null || splitpoint == null) 
-                		&& (!givenmap.get(key).equals(currmap.get(key)))) {
-                    conflicts = true;
-                    mergefiles(currmap.get(key), givenmap.get(key), key);
-                }
-            }
+
             if (conflicts) {
                 System.err.println("Encountered a merge conflict.");
                 return;
             } else {
-                String message = new String("Merged " + bd.getcurrent() + " with" + given);
+                String message = new String("Merged " + bd.getcurrent() + " with " + given + ".");
                 commit(message);
                 return;
             }
@@ -551,24 +552,23 @@ public class Main {
         }
     }
 
+
     /**
      * Method which takes a CURRENT and GIVEN commits at the head of two
      * branches and then returns the COMMIT at which they split.
      */
-    private static Commit findsplit(Commit current, Commit given) {
-        Commit prevofcurrent = current;
-        Commit prevofgiven = given;
-        HashSet<Commit> checked = new HashSet<Commit>();
-        checked.add(prevofcurrent);
-        while (prevofcurrent.haspreviouscommit()) {
-            prevofcurrent = prevofcurrent.prevobj();
-            checked.add(prevofcurrent);
-        }
-        while (prevofgiven.haspreviouscommit()) {
-            prevofgiven = prevofgiven.prevobj();
-            if (checked.contains((prevofgiven))) {
-                return prevofcurrent;
+    private static Commit findsplit(Commit currentf, Commit givenf) {
+        Commit current = currentf;
+        Commit given = givenf;
+        while (current.haspreviouscommit()) {
+            current = current.prevobj();
+	        while (given.haspreviouscommit()) {
+	            given = given.prevobj();
+	            if (given.shaname().equals(current.shaname())) {
+	                return current;
+	            }
             }
+	        given = givenf;
         }
         return null;
     }
@@ -590,49 +590,8 @@ public class Main {
             } else if (args.length > 2 && args[2].equals("--")) {
                 String filename = args[3];
                 String commitid = args[1];
-                File commits = new File(".gitlet", ".commits");
-                File commitidf = null;
-                if (commitid.length() < 40) {
-                    FilenameFilter filter = new FilenameFilter() {
-                        @Override
-                        public boolean accept(File dir, String name) {
-                            int lastIndex = commitid.length();
-                            String str = name.substring(0, lastIndex);
-                            if (str.equals(commitid)) {
-                                return true;
-                            }
-                            return false;
-                        }
-                    };
-                    File[] allfiles = commits.listFiles(filter);
-                    if (allfiles.length == 0) {
-                        System.out.println("No commit with that id exists.");
-                        return;
-                    }
-                    commitidf = allfiles[0];
-                } else {
-                    commitidf = new File(".gitlet/.commits", commitid);
-                }
-                if (commitidf.exists()) {
-                    Commit commitobj = getcommitobject(commitidf);
-                    HashMap<String, String> map = commitobj.getmap();
-                    if (map.get(filename) != null) {
-                        File repofile = new File(".gitlet", map.get(filename));
-                        if (repofile.exists()) {
-                            File tobeadded = new File(filename);
-                            tobeadded.createNewFile();
-
-                            Utils.writeContents(tobeadded, Utils.readContents(repofile));
-                            return;
-                        }
-                    } else {
-                        System.err.println("File does not " + "exist in that commit.");
-                        return;
-                    }
-                } else {
-                    System.err.println("No commit " + "with that id exists.");
-                    return;
-                }
+                checkoutcommit(filename, commitid, branchdata, true);
+                
             } else if (args.length == 2) {
                 String branchname = args[1];
                 if (branchdata.iscurrent(branchname)) {
@@ -1013,7 +972,54 @@ public class Main {
         byte[] c = outputStream.toByteArray();
         Utils.writeContents(merged, c);
     }
+    /** Checkout helper which performs the checkout of a single file from a particular commit. 
+     * @throws IOException */
+    private static boolean checkoutcommit(String filename, String commitid, BranchData bd, boolean print) throws IOException {
+    	File commits = new File(".gitlet", ".commits");
+        File commitidf = null;
+        if (commitid.length() < 40) {
+            FilenameFilter filter = new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    int lastIndex = commitid.length();
+                    String str = name.substring(0, lastIndex);
+                    if (str.equals(commitid)) {
+                        return true;
+                    }
+                    return false;
+                }
+            };
+            File[] allfiles = commits.listFiles(filter);
+            if (allfiles.length == 0) {
+                System.out.println("No commit with that id exists.");
+                return false;
+            }
+            commitidf = allfiles[0];
+        } else {
+            commitidf = new File(".gitlet/.commits", commitid);
+        }
+        if (commitidf.exists()) {
+            Commit commitobj = getcommitobject(commitidf);
+            HashMap<String, String> map = commitobj.getmap();
+            if (map.get(filename) != null) {
+                File repofile = new File(".gitlet", map.get(filename));
+                if (repofile.exists()) {
+                    File tobeadded = new File(filename);
+                    tobeadded.createNewFile();
 
+                    Utils.writeContents(tobeadded, Utils.readContents(repofile));
+                    return true;
+                }
+            } else {
+                System.err.println("File does not " + "exist in that commit.");
+                return false;
+            }
+        } else {
+            System.err.println("No commit " + "with that id exists.");
+            return false;
+        }
+		return false;
+    }
     /**
      * Checkout helper method which performs checkout of a single file
      * according to its FILENAME and writes info to the BRANCHDATA.
