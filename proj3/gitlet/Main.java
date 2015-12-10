@@ -498,46 +498,52 @@ public class Main {
                 splitmap = splitpoint.getmap();
                 looper.addAll(splitmap.keySet());
             }   
-                for (String splitkey : looper) {
+            File wdir = new File(".");
+            for (String f : Utils.plainFilenamesIn(wdir)) {
+                if (givenmap.containsKey(f) && (!currmap.containsKey(f))) {
+                   	System.out.println("There is an untracked file in the way; delete it or add it first.");
+                   	return;
+                }
+            }
+            for (String splitkey : looper) {
                 	
-                    String splithashval = splitmap.get(splitkey);
-                    String givenmapval = givenmap.get(splitkey);
-                    String currmapval = currmap.get(splitkey);
-                    if (splithashval == null) {
-                    	if (givenmapval == null) {
-                    		continue;
-                    	}
-                    	if (currmapval == null) {
-                    		if (checkoutcommit(splitkey, givencommit.shaname(), bd, false)) {
-                                add(splitkey);
-                                continue;
-                            }
-                    	}
-                    	
-                    }
-                    if (splithashval.equals(currmapval) && (!splithashval.equals(givenmapval))) {
-                        if (givenmapval == null) {
-                        	System.out.println("b");
-                            remove(splitkey);
-                        } else {
-                            if (checkoutcommit(givenmapval, givencommit.shaname(), bd, false)) {
+                String splithashval = splitmap.get(splitkey);
+                String givenmapval = givenmap.get(splitkey);
+                String currmapval = currmap.get(splitkey);
+                if (splithashval == null) {
+                	if (givenmapval == null) {
+                		continue;
+                	}
+                	if (currmapval == null) {
+                		if (checkoutcommit(splitkey, givencommit.shaname(), bd, false)) {
                             add(splitkey);
-                            }
+                            continue;
                         }
-                        continue;
-                    }
-                    if (!splithashval.equals(currmapval) && splithashval.equals(givenmapval)) {
-                        if (currmapval == null) {
-                        	continue;
+                	}
+                	
+                }
+                if (splithashval.equals(currmapval) && (!splithashval.equals(givenmapval))) {
+                    if (givenmapval == null) {
+                        remove(splitkey);
+                    } else {
+                        if (checkoutcommit(givenmapval, givencommit.shaname(), bd, false)) {
+                        add(splitkey);
                         }
                     }
-                    if (!splithashval.equals(currmapval) && !splithashval.equals(givenmapval)
-                            && !givenmapval.equals(currmapval)) {
-                        conflicts = true;
-                        mergefiles(currmapval, givenmapval, splitkey);
-                        continue;
+                    continue;
+                }
+                if (!splithashval.equals(currmapval) && splithashval.equals(givenmapval)) {
+                    if (currmapval == null) {
+                    	continue;
                     }
                 }
+                if (!splithashval.equals(currmapval) && !splithashval.equals(givenmapval)
+                        && !givenmapval.equals(currmapval)) {
+                    conflicts = true;
+                    mergefiles(currmapval, givenmapval, splitkey);
+                    continue;
+                }
+            }
 
             if (conflicts) {
                 System.err.println("Encountered a merge conflict.");
@@ -956,11 +962,11 @@ public class Main {
         byte[] thirdb = third.getBytes();
         byte[] currb = new byte[0];
         byte[] givenb = new byte[0];
-        if (!(curr == null)) {
+        if ((curr != null)) {
             File curfile = new File(".gitlet", curr);
             currb = Utils.readContents(curfile);
         }
-        if (!(given == null)) {
+        if ((given != null)) {
             File givenfile = new File(".gitlet", given);
             givenb = Utils.readContents(givenfile);
         }
