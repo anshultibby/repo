@@ -384,7 +384,7 @@ public class Main {
         Commit currhead = bd.getcurrobj();
         if (!remotebd.containsbranch(branchname)) {
             remotebd.addbranch(branchname, currhead.shaname());
-            writecommits(remotename, currhead, null);
+            writecommits(remotepath, currhead, null);
         }
         Commit remotehead = remotebd.getcommitobj(branchname);
         if (remotehead.shaname().equals(currhead.shaname())) {
@@ -399,7 +399,7 @@ public class Main {
             }
         }
         if (hashistory) {
-            writecommits(remotename, currhead, loophead.shaname());
+            writecommits(remotepath, currhead, loophead.shaname());
         } else {
             System.err.println("Please pull down" + " remote changes before pushing.");
         }
@@ -423,7 +423,7 @@ public class Main {
             System.err.println("That remote does not have that branch.");
         }
         Commit remoteheadbranch = remotebd.getcommitobj(branchname);
-        fetchfiles(remotename, remoteheadbranch, branchname);
+        fetchfiles(remotepath, remoteheadbranch, branchname);
         String branch = new String(remotename + "" + "/" + "" + branchname);
         bd.addbranch(branch, remoteheadbranch.shaname());
         File gitlet = new File(".gitlet");
