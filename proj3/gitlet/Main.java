@@ -454,7 +454,6 @@ public class Main {
         }
         File remoterepo = new File(remotepath);
         BranchData remotebd = (BranchData) getremoteBD(remoterepo);
-        System.out.println(remotepath);
         if (!remotebd.containsbranch(branchname)) {
             System.err.println("That remote does not have that branch.");
             return;
