@@ -458,7 +458,7 @@ public class Main {
             System.err.println("That remote does not have that branch.");
             return;
         }
-        Commit remoteheadbranch = remotebd.getcommitobj(branchname);
+        Commit remoteheadbranch = remotebd.getcommitobj(remotepath, branchname);
         fetchfiles(remotepath, remoteheadbranch, branchname);
         String branch = new String(remotename + "" + "/" + "" + branchname);
         bd.addbranch(branch, remoteheadbranch.shaname());
@@ -1277,6 +1277,7 @@ public class Main {
         } catch (IOException | ClassNotFoundException excp) {
             obj = null;
         }
+        file2.delete();
         return obj;
     }
 
