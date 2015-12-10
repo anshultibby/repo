@@ -411,17 +411,19 @@ public class Main {
      */
     private static void fetch(String remotename, String branchname) throws IOException {
         BranchData bd = getBDobject();
-        String remotepath = bd.getremotepath(remotename);
-        File remoterepo = new File(remotepath);
-        if (!remoterepo.exists()) {
+        String remotepath = bd.getremotepath(remotename); 
+        if (remotepath == null) {
             System.err.println("Remote directory not found.");
             return;
         }
-        BranchData remotebd = getremoteBD(remotename);
+        File remoterepo = new File(remotepath);
+        BranchData remotebd = getremoteBD(remotepath);
         if (!remotebd.containsbranch(branchname)) {
             System.err.println("That remote does not have that branch.");
+            return;
         }
         Commit remoteheadbranch = remotebd.getcommitobj(branchname);
+        System.out.println(remoteheadbranch);
         fetchfiles(remotepath, remoteheadbranch, branchname);
         String branch = new String(remotename + "" + "/" + "" + branchname);
         bd.addbranch(branch, remoteheadbranch.shaname());
@@ -920,8 +922,9 @@ public class Main {
      */
     private static void fetchfiles(String pathname,
             Commit headcommit, String branchname) throws IOException {
-        File gitlet = new File(pathname, ".gitlet");
+        File gitlet = new File(pathname);
         File commits = new File(gitlet, ".commits");
+        System.out.println(headcommit);
         storeasfile(headcommit.shaname(), commits, headcommit);
         HashMap<String, String> commitmap = headcommit.getmap();
         for (String file : commitmap.keySet()) {
@@ -1227,7 +1230,7 @@ public class Main {
 
     /** Method which returns the BRANCHDATA object from a remote REPO branch. */
     private static BranchData getremoteBD(String repo) {
-        File repof = new File(repo, ".gitlet");
+        File repof = new File(repo);
         File file = new File(repof, "BranchData");
         BranchData obj;
         try {
