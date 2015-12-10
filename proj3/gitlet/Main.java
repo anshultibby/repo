@@ -501,8 +501,9 @@ public class Main {
                         if (givenmapval.equals(null)) {
                             remove(splithashval);
                         } else {
-                            checkoutone(givenmapval, bd, false);
+                            if (checkoutone(givenmapval, bd, false)) {
                             add(splitkey);
+                            }
                         }
                     }
                     if (!splithashval.equals(currmapval) && splithashval.equals(givenmapval)) {
@@ -524,8 +525,9 @@ public class Main {
             }
             for (String key : keyset) {
                 if (currmap.get(key) == null) {
-                    checkoutone(key, bd, false);
+                    if (checkoutone(key, bd, false)) {
                     add(key);
+                    }
                 }
                 if (givenmap.get(key) == null) {
                     // do nothing
@@ -1016,7 +1018,7 @@ public class Main {
      * according to its FILENAME and writes info to the BRANCHDATA.
      * @throws IOException
      */
-    private static void checkoutone(String filename,
+    private static boolean checkoutone(String filename,
             BranchData branchdata, boolean print) throws IOException {
         Commit headcommitobj = branchdata.getcurrobj();
         HashMap<String, String> map = headcommitobj.getmap();
@@ -1030,11 +1032,12 @@ public class Main {
         } else {
         	if (print) {
             System.err.println("File does not exist in that commit.");
-            return;
+            return false;
         	}
         }
         File gitlet = new File(".gitlet");
         storeasfile("BranchData", gitlet, branchdata);
+        return true;
     }
 
     /**
