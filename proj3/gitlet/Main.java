@@ -432,7 +432,7 @@ public class Main {
     private static void fetch(String remotename,
             String branchname) throws IOException {
         BranchData bd = getBDobject();
-        String remotepath = bd.getremotepath(remotename); 
+        String remotepath = bd.getremotepath(remotename);
         if (remotepath == null) {
             System.err.println("Remote directory not found.");
             return;
@@ -523,21 +523,20 @@ public class Main {
                 splitmap = splitpoint.getmap();
                 looper.addAll(splitmap.keySet());
 
-            }   
+            }
             File wdir = new File(".");
             for (String f : Utils.plainFilenamesIn(wdir)) {
                 if (givenmap.containsKey(f) && (!currmap.containsKey(f))) {
-                   	System.out.println("There is an untracked file in the way; delete it or add it first.");
-                   	return;
+                    System.out.println("There is an untracked "
+                            + "file in the way; delete it or add it first.");
+                    return;
                 }
             }
             for (String splitkey : looper) {
-                	
                 String splithashval = splitmap.get(splitkey);
                 String givenmapval = givenmap.get(splitkey);
                 String currmapval = currmap.get(splitkey);
                 if (splithashval == null) {
-
                 	if (givenmapval == null) {
                 		continue;
                 	}
@@ -556,27 +555,27 @@ public class Main {
                 }
 
                 if (splithashval.equals(currmapval) && (!splithashval.equals(givenmapval))) {
+
                     if (givenmapval == null) {
                         remove(splitkey);
                     } else {
-                        if (checkoutcommit(givenmapval, givencommit.shaname(), bd, false)) {
-                        add(splitkey);
+                        if (checkoutcommit(givenmapval,
+                                givencommit.shaname(), bd, false)) {
+                            add(splitkey);
                         }
                     }
                     continue;
                 }
-
-                if (!splithashval.equals(currmapval) && splithashval.equals(givenmapval)) {
+                if (!splithashval.equals(currmapval)
+                        && splithashval.equals(givenmapval)) {
                     if (currmapval == null) {
-                    	continue;
+                        continue;
                     }
                 }
-
-                    conflicts = true;
-                    mergefiles(currmapval, givenmapval, splitkey);
-                    continue;
-                }
-
+                conflicts = true;
+                mergefiles(currmapval, givenmapval, splitkey);
+                continue;
+            }
             if (conflicts) {
                 System.err.println("Encountered a merge conflict.");
                 return;
