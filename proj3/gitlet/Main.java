@@ -424,6 +424,11 @@ public class Main {
             return;
         }
         Commit remotehead = remotebd.getcommitobj(branchname);
+        if (remotehead == null) {
+            System.err.println("Please pull down"
+                    + " remote changes before pushing.");
+            return;
+        }
         if (remotehead.shaname().equals(currhead.shaname())) {
             return;
         }
