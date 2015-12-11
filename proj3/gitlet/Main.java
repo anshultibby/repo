@@ -417,6 +417,7 @@ public class Main {
         if (!remotebd.containsbranch(branchname)) {
             remotebd.addbranch(branchname, currhead.shaname());
             writeremotefile(currhead, remotepath);
+            storeasfile("BranchData", remoterepo, remotebd);
             return;
         }
         Commit remotehead = remotebd.getcommitobj(branchname);
@@ -433,6 +434,8 @@ public class Main {
         }
         if (hashistory) {
             writeremotefile(currhead, remotepath);
+            remotebd.setcurrhead(currhead.shaname());
+            storeasfile("BranchData", remoterepo, remotebd);
         } else {
             System.err.println("Please pull down"
                     + " remote changes before pushing.");
