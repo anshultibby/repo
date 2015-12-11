@@ -382,22 +382,23 @@ public class Main {
 
 
     /**
-	 * Method which takes a path NAME to perform the rm-remote functionality.
-	 *
-	 * @throws IOException
-	 */
-	private static void rmremote(String name) throws IOException {
-	    BranchData bd = getBDobject();
-	    if (!bd.hasremote(name)) {
-	        System.err.println(" A remote with that name does not exist.");
-	        return;
-	    }
-	    bd.rmremote(name);
-	    File gitlet = new File(".gitlet");
-	    storeasfile("BranchData", gitlet, bd);
-	}
+     * Method which takes a path NAME to perform the
+     * rm-remote functionality.
+     *
+     * @throws IOException
+     */
+    private static void rmremote(String name) throws IOException {
+        BranchData bd = getBDobject();
+        if (!bd.hasremote(name)) {
+            System.err.println(" A remote with that name does not exist.");
+            return;
+        }
+        bd.rmremote(name);
+        File gitlet = new File(".gitlet");
+        storeasfile("BranchData", gitlet, bd);
+    }
 
-	/**
+    /**
      * Method which performs the push functionality given a REMOTENAME and a
      * BRANCHNAME.
      *
