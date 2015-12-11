@@ -416,7 +416,8 @@ public class Main {
         Commit currhead = bd.getcurrobj();
         if (!remotebd.containsbranch(branchname)) {
             remotebd.addbranch(branchname, currhead.shaname());
-            writecommits(remotepath, currhead, null);
+            writeremotefile(currhead, remotepath);
+            return;
         }
         Commit remotehead = remotebd.getcommitobj(branchname);
         if (remotehead.shaname().equals(currhead.shaname())) {
@@ -424,14 +425,14 @@ public class Main {
         }
         Commit loophead = currhead;
         while (loophead.haspreviouscommit()) {
-            loophead = currhead.prevremoteobj(remotename);
-            if (currhead.shaname().equals(remotehead.shaname())) {
-                hashistory = true;
+            loophead = loophead.prevremoteobj(remotepath);
+            if (remotehead.shaname().equals(loophead.shaname())) {
+            	hashistory = true;
                 break;
             }
         }
         if (hashistory) {
-            writecommits(remotepath, currhead, loophead.shaname());
+            writeremotefile(currhead, remotepath);
         } else {
             System.err.println("Please pull down"
                     + " remote changes before pushing.");
@@ -1292,7 +1293,7 @@ public class Main {
      */
     private static void writecommits(String pathname,
             Commit headcommit, String upto) throws IOException {
-        File gitlet = new File(pathname, ".gitlet");
+        File gitlet = new File(pathname);
         File commits = new File(gitlet, ".commits");
         storeasfile(headcommit.shaname(), commits, headcommit);
         while (headcommit.haspreviouscommit()) {
@@ -1310,6 +1311,33 @@ public class Main {
             }
         }
     }
+    /** Store files in remote. 
+     * @throws IOException */
+    private static void writeremotefile(Commit commit, String pathname) throws IOException {
+    	File repo = new File (pathname);
+         File commits = new File(repo, ".commits");
+         File mygitlet = new File(".gitlet", ".commits");
+         storeasfile(commit.shaname(), commits, commit);
+         HashMap<String, String> commitmap = commit.getmap();
+         for (String file : commitmap.keySet()) {
+             File fileR = new File(pathname, commitmap.get(file));
+             File store = new File(".gitlet", commitmap.get(file));
+             fileR.createNewFile();
+             Utils.writeContents(fileR, Utils.readContents(store));
+         }
+         while (commit.haspreviouscommit()) {
+             commit = commit.prevobj();
+             String prev = commit.shaname();
+             HashMap<String, String> commitmap2 = commit.getmap();
+             for (String file : commitmap2.keySet()) {
+                 File fileR = new File(pathname, commitmap.get(file));
+                 File store = new File(".gitlet", commitmap.get(file));
+                 fileR.createNewFile();
+                 Utils.writeContents(fileR, Utils.readContents(store));
+             }
+             storeasfile(prev, commits, commit);
+         }
+     }
 
     /**
      * Method to convert an object S into a file of NAME with a particular
