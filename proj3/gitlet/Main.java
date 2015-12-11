@@ -380,23 +380,24 @@ public class Main {
         storeasfile("BranchData", gitlet, bd);
     }
 
-    /**
-     * Method which takes a path NAME to perform the rm-remote functionality.
-     *
-     * @throws IOException
-     */
-    private static void rmremote(String name) throws IOException {
-        BranchData bd = getBDobject();
-        if (!bd.hasremote(name)) {
-            System.err.println(" A remote with that name does not exist.");
-            return;
-        }
-        bd.rmremote(name);
-        File gitlet = new File(".gitlet");
-        storeasfile("BranchData", gitlet, bd);
-    }
 
     /**
+	 * Method which takes a path NAME to perform the rm-remote functionality.
+	 *
+	 * @throws IOException
+	 */
+	private static void rmremote(String name) throws IOException {
+	    BranchData bd = getBDobject();
+	    if (!bd.hasremote(name)) {
+	        System.err.println(" A remote with that name does not exist.");
+	        return;
+	    }
+	    bd.rmremote(name);
+	    File gitlet = new File(".gitlet");
+	    storeasfile("BranchData", gitlet, bd);
+	}
+
+	/**
      * Method which performs the push functionality given a REMOTENAME and a
      * BRANCHNAME.
      *
@@ -457,6 +458,10 @@ public class Main {
             return;
         }
         File remoterepo = new File(remotepath);
+        if (!remoterepo.exists()) {
+            System.err.println("Remote directory not found.");
+            return;
+        }
         BranchData remotebd = (BranchData) getremoteBD(remoterepo);
         if (!remotebd.containsbranch(branchname)) {
             System.err.println("That remote does not have that branch.");
@@ -479,7 +484,7 @@ public class Main {
     private static void pull(String pathname,
             String branchname) throws IOException {
         fetch(pathname, branchname);
-        merge(branchname);
+        merge(pathname + "/" + branchname);
     }
 
     /** Check staging FILES and returns TRUE if there are
