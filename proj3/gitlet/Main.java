@@ -456,17 +456,17 @@ public class Main {
         String remotepath = bd.getremotepath(remotename);
         if (remotepath == null) {
             System.err.println("Remote directory not found.");
-            return;
+            System.exit(0);
         }
         File remoterepo = new File(remotepath);
         if (!remoterepo.exists()) {
             System.err.println("Remote directory not found.");
-            return;
+            System.exit(0);
         }
         BranchData remotebd = (BranchData) getremoteBD(remoterepo);
         if (!remotebd.containsbranch(branchname)) {
             System.err.println("That remote does not have that branch.");
-            return;
+            System.exit(0);
         }
         Commit remoteheadbranch = remotebd.getcommitobj(remotepath, branchname);
         fetchfiles(remotepath, remoteheadbranch, branchname);
@@ -523,13 +523,13 @@ public class Main {
             Commit currcommit = bd.getcurrobj();
             Commit givencommit = bd.getcommitobj(given);
             if (currcommit.shaname().equals(givencommit.shaname())) {
-                ancestorPrintMsg();
+                ancestorPrintMsg(); return;
             }
             Commit prevofcurrent = currcommit;
             while (prevofcurrent.prev() != null) {
                 prevofcurrent = prevofcurrent.prevobj();
                 if (givencommit.shaname().equals(prevofcurrent.shaname())) {
-                    ancestorPrintMsg();
+                    ancestorPrintMsg(); return;
                 }
             }
             Commit prevofgiven = givencommit;
@@ -590,8 +590,7 @@ public class Main {
                 if (currmapval == null) {
                     if (checkoutcommit(splitkey,
                             givencommit.shaname(), bd, false)) {
-                        add(splitkey);
-                        continue;
+                        add(splitkey); continue;
                     }
                 }
                 if (!currmapval.equals(givenmapval)) {
@@ -618,10 +617,14 @@ public class Main {
                 if (currmapval == null) {
                     continue;
                 }
+                continue;
             }
-            conflicts = true;
-            mergefiles(currmapval, givenmapval, splitkey);
-            continue;
+            if (!splithashval.equals(currmapval)
+                    && !splithashval.equals(givenmapval)) {
+                conflicts = true;
+                mergefiles(currmapval, givenmapval, splitkey);
+                continue;
+            }
         }
         if (conflicts) {
             System.err.println("Encountered a merge conflict.");
