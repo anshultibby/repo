@@ -411,6 +411,7 @@ public class Main {
         File remoterepo = new File(remotepath);
         if (!remoterepo.exists()) {
             System.err.println("Remote directory not found.");
+            return;
         }
         File repo = new File(remotepath);
         BranchData remotebd = (BranchData) getremoteBD(repo);
